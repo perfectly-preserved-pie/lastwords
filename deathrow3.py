@@ -65,6 +65,13 @@ df.to_csv("offenders_data_utf8.csv", index=False, encoding="utf-8-sig")
 
 # Use Pandas to put all this crap into a dataframe
 dfcsv = pd.read_csv('/mnt/c/Users/lunar/Documents/offenders_data_utf8.csv')
-# Iterate over the dataframe and send one API call every day
+# Iterate over each inmate in the dataframe
 for inmate in dfcsv.head().itertuples():
-    	client.create_quote('lastwords2', state="queued", quote="print(inmate[11])", source="print(f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>")"
+    # Generate the last statement for each inmate
+    quote = inmate[11]
+    # Generate the source information
+    source = print(f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>")
+    # Generate the tags 
+    tags = print(f"Execution #{inmate.Execution}")
+    # Send the API call (the post will be queued)  
+    client.create_quote('lastwords2', state="queued", quote=quote, source=source, tags=tags)  
