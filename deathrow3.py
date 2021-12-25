@@ -69,9 +69,12 @@ dfcsv = pd.read_csv('/mnt/c/Users/lunar/Documents/offenders_data_utf8.csv')
 for inmate in dfcsv.head().itertuples():
     # Generate the last statement for each inmate
     quote = inmate[11]
-    # Generate the source information
-    source = print(f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>")
+    # Generate the rest of the "source" information
+    # use an f-string to assign output to the 'source' variable
+    # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
+    # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
+    source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
     # Generate the tags 
-    tags = print(f"Execution #{inmate.Execution}")
+    tags = f"Execution #{inmate.Execution}"
     # Send the API call (the post will be queued)  
     client.create_quote('lastwords2', state="queued", quote=quote, source=source, tags=tags)  
