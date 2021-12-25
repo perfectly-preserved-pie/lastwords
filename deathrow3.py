@@ -1,7 +1,7 @@
 import random
 import time
 import csv
-
+import pytumblr
 import pandas as pd
 import requests
 from lxml import html
@@ -62,6 +62,16 @@ df["Last Statement"] = statements
 # Export to CSV using the utf-8-sig encoding
 # https://stackoverflow.com/a/43684587
 df.to_csv("offenders_data_utf8.csv", index=False, encoding="utf-8-sig")
+
+# Create the PyTumblr client
+# Read these values from ~/.tumblr (which should've been created with interactive_console.py already)
+# https://github.com/tumblr/pytumblr#create-a-client
+client = pytumblr.TumblrRestClient(
+    '<consumer_key>',
+    '<consumer_secret>',
+    '<oauth_token>',
+    '<oauth_secret>',
+)
 
 # Use Pandas to put all this crap into a dataframe
 dfcsv = pd.read_csv('/mnt/c/Users/lunar/Documents/offenders_data_utf8.csv')
