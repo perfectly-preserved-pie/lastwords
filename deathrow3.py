@@ -77,4 +77,4 @@ for inmate in dfcsv.head().itertuples():
     # Generate the tags 
     tags = f"Execution #{inmate.Execution}"
     # Send the API call (the post will be queued)  
-    client.create_quote('lastwords2', state="queued", quote=quote, source=source, tags=tags)  
+    client.create_quote('lastwords2', state="queued", quote=quote, source=source, tags=[tags])  
