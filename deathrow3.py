@@ -68,6 +68,9 @@ for item in offender_data:
     time.sleep(random.randint(1, 4))
 
 df["Last Statement"] = statements
+# Remove all inmates that don't have a last statement
+# https://www.statology.org/pandas-drop-rows-that-contain-string/
+df[df["Last Statement"].str.contains("This inmate declined to make a last statement.")==False]
 # Export to CSV using the utf-8-sig encoding
 # https://stackoverflow.com/a/43684587
 df.to_csv("offenders_data_utf8.csv", index=False, encoding="utf-8-sig")
