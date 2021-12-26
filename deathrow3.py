@@ -71,14 +71,9 @@ df["Last Statement"] = statements
 # Remove all inmates that don't have a last statement
 # https://www.statology.org/pandas-drop-rows-that-contain-string/
 df[df["Last Statement"].str.contains("This inmate declined to make a last statement.")==False]
-# Export to CSV using the utf-8-sig encoding
-# https://stackoverflow.com/a/43684587
-df.to_csv("offenders_data_utf8.csv", index=False, encoding="utf-8-sig")
 
-# Use Pandas to put all this crap into a dataframe
-dfcsv = pd.read_csv('/mnt/c/Users/lunar/Documents/offenders_data_utf8.csv')
 # Iterate over each inmate in the dataframe
-for inmate in dfcsv.head().itertuples():
+for inmate in df.head().itertuples():
     # Generate the last statement for each inmate
     quote = inmate[11]
     # Generate the rest of the "source" information
