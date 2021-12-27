@@ -82,8 +82,28 @@ df = df[~df["Last Statement"].isin(['This inmate declined to make a last stateme
 # https://www.w3schools.com/python/pandas/pandas_cleaning_empty_cells.asp
 df.dropna(inplace = True)
 
+# Sort the df by oldest executions first
+# https://stackoverflow.com/a/67689015
+# https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sort_values.html
+df_datesorted = df.sort_values(by="Date", key=pd.to_datetime, ascending=True)
+
 # Iterate over each inmate in the dataframe
-for inmate in df.itertuples():
+# The Tumblr queue can only hold 300 posts at once, so we need to immediately publish the first 300 oldest executions first and queue the rest, more recent ones
+for inmate in df_datesorted.head(300).itertuples():
+    # Generate the last statement for each inmate
+    quote = inmate[11]
+    # Generate the rest of the "source" information
+    # use an f-string to assign output to the 'source' variable
+    # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
+    # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
+    source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
+    # Generate the tags 
+    tags = f"Execution #{inmate.Execution}"
+    # Send the API call (the post will be queued)  
+    client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=[tags])  
+
+# Queue the remaining (total index minus the first 300 we immediately posted) posts    
+for inmate in df_datesorted.tail(len(df.index)-300).itertuples():
     # Generate the last statement for each inmate
     quote = inmate[11]
     # Generate the rest of the "source" information
