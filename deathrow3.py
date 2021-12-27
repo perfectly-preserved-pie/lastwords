@@ -75,12 +75,12 @@ for item in offender_data:
 
 df["Last Statement"] = statements
 # Remove all inmates that don't have a last statement
-print("Removing all inmates without a statement...")
 # https://www.statology.org/pandas-drop-rows-that-contain-string/
 df[df["Last Statement"].str.contains("This inmate declined to make a last statement.")==False]
+df[df["Last Statement"].str.contains("No statement was made.")==False]
+df[df["Last Statement"].str.contains("No statement given.")==False]
 
 # Iterate over each inmate in the dataframe
-print("Iterating over the dataframe...")
 for inmate in df.head().itertuples():
     # Generate the last statement for each inmate
     quote = inmate[11]
