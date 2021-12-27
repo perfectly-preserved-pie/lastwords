@@ -11,11 +11,18 @@ from lxml import html
 # Create the PyTumblr client
 # Read these values from ~/.tumblr (which should've been created with interactive_console.py already)
 # https://github.com/tumblr/pytumblr#create-a-client
+
+# Prompt user for the secrets
+consumer_key = input("Please enter the consumer key:\n")
+consumer_secret = input("Please enter the consumer secret:\n")
+oauth_token = input("Please enter the OAuth token:\n")
+oauth_secret = input("Please enter the OAuth secret:\n")
+
 client = pytumblr.TumblrRestClient(
-    '<consumer_key>',
-    '<consumer_secret>',
-    '<oauth_token>',
-    '<oauth_secret>',
+    f"{consumer_key}",
+    f"{consumer_secret}",
+    f"{oauth_token}",
+    f"{oauth_secret}",
 )
 
 # TDCJ stuff
@@ -69,10 +76,12 @@ for item in offender_data:
 
 df["Last Statement"] = statements
 # Remove all inmates that don't have a last statement
+print("Removing all inmates without a statement...")
 # https://www.statology.org/pandas-drop-rows-that-contain-string/
 df[df["Last Statement"].str.contains("This inmate declined to make a last statement.")==False]
 
 # Iterate over each inmate in the dataframe
+print("Iterating over the dataframe...")
 for inmate in df.head().itertuples():
     # Generate the last statement for each inmate
     quote = inmate[11]
