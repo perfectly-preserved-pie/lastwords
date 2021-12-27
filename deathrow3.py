@@ -1,6 +1,5 @@
 import random
 import time
-import csv
 import pytumblr
 import pandas as pd
 import requests
