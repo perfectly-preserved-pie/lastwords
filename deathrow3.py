@@ -74,6 +74,7 @@ for item in offender_data:
     time.sleep(random.randint(1, 4))
 
 df["Last Statement"] = statements
+
 # Remove all inmates that don't have a last statement
 # https://www.statology.org/pandas-drop-rows-that-contain-string/
 df[df["Last Statement"].str.contains("This inmate declined to make a last statement.")==False]
@@ -81,7 +82,7 @@ df[df["Last Statement"].str.contains("No statement was made.")==False]
 df[df["Last Statement"].str.contains("No statement given.")==False]
 
 # Iterate over each inmate in the dataframe
-for inmate in df.head().itertuples():
+for inmate in df.itertuples():
     # Generate the last statement for each inmate
     quote = inmate[11]
     # Generate the rest of the "source" information
