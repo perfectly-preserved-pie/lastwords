@@ -76,10 +76,11 @@ for item in offender_data:
 df["Last Statement"] = statements
 
 # Remove all inmates that don't have a last statement
-# https://www.statology.org/pandas-drop-rows-that-contain-string/
-df[df["Last Statement"].str.contains("This inmate declined to make a last statement.")==False]
-df[df["Last Statement"].str.contains("No statement was made.")==False]
-df[df["Last Statement"].str.contains("No statement given.")==False]
+# https://stackoverflow.com/a/43399866
+df = df[~df["Last Statement"].isin(['This inmate declined to make a last statement.','No statement was made.','No statement given.','None','(Written statement)','Spoken: No','Spoken: No.','No','No last statement.'])]
+# Clean up rows with empty cells
+# https://www.w3schools.com/python/pandas/pandas_cleaning_empty_cells.asp
+df.dropna(inplace = True)
 
 # Iterate over each inmate in the dataframe
 for inmate in df.itertuples():
