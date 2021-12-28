@@ -115,7 +115,7 @@ if (len(df_datesorted.loc[(len(df_datesorted.index)):(len(df_datesorted.index))-
         # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
         source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
         # Generate the tags 
-        tags = f"Execution #{inmate.Execution}"
+        tags = f"{inmate.Index}"
         # Send the API call (the post will be queued)  
         client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=[tags]) 
 else:
@@ -136,7 +136,7 @@ if (len(df_datesorted.loc[(len(df_datesorted.index))-251:300])) == 23:
         # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
         source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
         # Generate the tags 
-        tags = f"Execution #{inmate.Execution}"
+        tags = f"{inmate.Index}"
         # Send the API call (the post will be queued)  
         client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=[tags]) 
 else:
@@ -153,7 +153,7 @@ if (len(df_datesorted.loc[299:0])) <= 300:
         # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
         source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
         # Generate the tags 
-        tags = f"Execution #{inmate.Execution}"
+        tags = f"{inmate.Index}"
         # Send the API call (the post will be queued)  
         client.create_quote('lastwords2', state="queue", quote=quote, source=source, tags=[tags])
 else:
