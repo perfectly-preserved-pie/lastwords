@@ -87,7 +87,7 @@ df.dropna(inplace = True)
 # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sort_values.html
 df_datesorted = df.sort_values(by="Date", key=pd.to_datetime, ascending=True)
 
-# Iterate over each inmate in the dataframe and use .loc to select specific rows based on Execution number
+# Iterate over each inmate in the dataframe and use .loc to select specific rows
 # https://towardsdatascience.com/how-to-use-loc-and-iloc-for-selecting-data-in-pandas-bd09cb4c3d79
 # Also, we're gonna hit Tumblr's API limits as it stands: 
 #    1. 250 posts/day.
