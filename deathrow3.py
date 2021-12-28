@@ -94,46 +94,57 @@ df_datesorted = df.sort_values(by="Date", key=pd.to_datetime, ascending=True)
 #    2. Can only have 300 posts in the queue at once.
 # We have 573 inmates in the df. Publishing 200 of them brings the remainder down to 323, which means we're just 23 over the max queue limit. Annoying!
 # My shitty solution is to publish the first 250 executions (from the total index to total index minus 250) on day 1, then wait 24 hours, then publish the next 23, bringing the remainder to 300 and having that 300 be queued.
-for inmate in df_datesorted.loc[(len(df_datesorted.index)):(len(df_datesorted.index))-250].itertuples():
-    # Generate the last statement for each inmate
-    quote = inmate[11]
-    # Generate the rest of the "source" information
-    # use an f-string to assign output to the 'source' variable
-    # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
-    # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
-    source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
-    # Generate the tags 
-    tags = f"Execution #{inmate.Execution}"
-    # Send the API call (the post will be queued)  
-    client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=[tags])  
+# If there are 200 or less posts, we're good to use the API
+if (len(df_datesorted.loc[(len(df_datesorted.index)):(len(df_datesorted.index))-250])) <= 200:
+    for inmate in df_datesorted.loc[(len(df_datesorted.index)):(len(df_datesorted.index))-250].itertuples():
+        # Generate the last statement for each inmate
+        quote = inmate[11]
+        # Generate the rest of the "source" information
+        # use an f-string to assign output to the 'source' variable
+        # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
+        # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
+        source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
+        # Generate the tags 
+        tags = f"Execution #{inmate.Execution}"
+        # Send the API call (the post will be queued)  
+        client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=[tags]) 
+else:
+    print("The number of posts is too high. No API call will be sent.")
 
 # Wait 24 hours until our post API limit resets    
 time.sleep(86400)
 
 # Post the next 23 posts
-for inmate in df_datesorted.loc[(len(df_datesorted.index))-251:300].itertuples():
-    # Generate the last statement for each inmate
-    quote = inmate[11]
-    # Generate the rest of the "source" information
-    # use an f-string to assign output to the 'source' variable
-    # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
-    # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
-    source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
-    # Generate the tags 
-    tags = f"Execution #{inmate.Execution}"
-    # Send the API call (the post will be queued)  
-    client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=[tags])  
+# we're expecting 23 posts, so add an if check
+if (len(df_datesorted.loc[(len(df_datesorted.index))-251:300])) == 23:
+    for inmate in df_datesorted.loc[(len(df_datesorted.index))-251:300].itertuples():
+        # Generate the last statement for each inmate
+        quote = inmate[11]
+        # Generate the rest of the "source" information
+        # use an f-string to assign output to the 'source' variable
+        # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
+        # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
+        source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
+        # Generate the tags 
+        tags = f"Execution #{inmate.Execution}"
+        # Send the API call (the post will be queued)  
+        client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=[tags]) 
+else:
+    print("The number of expected posts was NOT 23. No API call will be sent.")
 
 # Queue the remaining posts from index 299 to the last index (should be 300 rows)
-for inmate in df_datesorted.loc[299:0].itertuples():
-    # Generate the last statement for each inmate
-    quote = inmate[11]
-    # Generate the rest of the "source" information
-    # use an f-string to assign output to the 'source' variable
-    # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
-    # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
-    source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
-    # Generate the tags 
-    tags = f"Execution #{inmate.Execution}"
-    # Send the API call (the post will be queued)  
-    client.create_quote('lastwords2', state="queue", quote=quote, source=source, tags=[tags])  
+if (len(df_datesorted.loc[299:0])) <= 300:
+    for inmate in df_datesorted.loc[299:0].itertuples():
+        # Generate the last statement for each inmate
+        quote = inmate[11]
+        # Generate the rest of the "source" information
+        # use an f-string to assign output to the 'source' variable
+        # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
+        # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
+        source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
+        # Generate the tags 
+        tags = f"Execution #{inmate.Execution}"
+        # Send the API call (the post will be queued)  
+        client.create_quote('lastwords2', state="queue", quote=quote, source=source, tags=[tags])
+else:
+    print("The number of queued expected posts was not less than 300. No API call will be sent.")
