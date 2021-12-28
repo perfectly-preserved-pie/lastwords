@@ -1,3 +1,7 @@
+# Publishing Texas' death row inmates' last statements before execution to a Tumblr blog
+# A fun wholesome project written by Sahib Bhai during the Holiday Season 2021 🎅🎄
+# https://github.com/perfectly-preserved-pie/lastwords
+
 import random
 import time
 import pytumblr
