@@ -29,6 +29,9 @@ client = pytumblr.TumblrRestClient(
 )
 
 # TDCJ stuff
+# this is a slightly modified version of the code I've shamelessly stolen from StackOverflow
+# https://stackoverflow.com/a/64873079
+# thank you, internet
 base_url = "https://www.tdcj.texas.gov/death_row"
 response = requests.get(f"{base_url}/dr_executed_offenders.html", verify=False)
 statement_xpath = '//*[@id="content_right"]/p[6]/text()'
@@ -78,6 +81,9 @@ for item in offender_data:
     time.sleep(random.randint(1, 4))
 
 df["Last Statement"] = statements
+
+# end stolen code. 
+# from now on THIS IS ALL ME BABY WOOOOOOO
 
 # Remove all inmates that don't have a last statement
 # https://stackoverflow.com/a/43399866
