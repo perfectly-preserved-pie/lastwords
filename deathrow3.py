@@ -117,7 +117,7 @@ if (len(df_datesorted.loc[(len(df_datesorted.index)):(len(df_datesorted.index))-
         # Generate the tags 
         tags = f"Execution #{inmate.Execution}", f"Index: {inmate.Index}"
         # Send the API call (the post will be queued)  
-        client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=[tags]) 
+        client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=tags) 
 else:
     print("The number of posts is too high. No API call will be sent.")
 
@@ -138,7 +138,7 @@ if (len(df_datesorted.loc[(len(df_datesorted.index))-251:300])) == 23:
         # Generate the tags 
         tags = f"Execution #{inmate.Execution}", f"Index: {inmate.Index}"
         # Send the API call (the post will be queued)  
-        client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=[tags]) 
+        client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=tags) 
 else:
     print("The number of expected posts was NOT 23. No API call will be sent.")
 
@@ -155,6 +155,6 @@ if (len(df_datesorted.loc[299:0])) <= 300:
         # Generate the tags 
         tags = f"Execution #{inmate.Execution}", f"Index: {inmate.Index}"
         # Send the API call (the post will be queued)  
-        client.create_quote('lastwords2', state="queue", quote=quote, source=source, tags=[tags])
+        client.create_quote('lastwords2', state="queue", quote=quote, source=source, tags=tags)
 else:
     print("The number of queued expected posts was not less than 300. No API call will be sent.")
