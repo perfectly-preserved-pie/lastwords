@@ -102,7 +102,7 @@ df_datesorted = df.sort_values(by="Date", key=pd.to_datetime, ascending=True)
 # Also, we're gonna hit Tumblr's API limits as it stands: 
 #    1. 250 posts/day.
 #    2. Can only have 300 posts in the queue at once.
-# We have 573 inmates in the df. Publishing 200 of them brings the remainder down to 323, which means we're just 23 over the max queue limit. Annoying!
+# We have 573 inmates in the df. Publishing 250 of them brings the remainder down to 323, which means we're just 23 over the max queue limit. Annoying!
 # My shitty solution is to publish the first 250 executions (from the total index to total index minus 250) on day 1, then wait 24 hours, then publish the next 23, bringing the remainder to 300 and having that 300 be queued.
 # If there are 250 or less posts, we're good to use the API
 if (len(df_datesorted.loc[(len(df_datesorted.index)):(len(df_datesorted.index))-250])) <= 250:
