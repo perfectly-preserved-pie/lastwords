@@ -127,7 +127,7 @@ if (len(df_datesorted.loc[(len(df_datesorted.index)):(len(df_datesorted.index))-
         # use an f-string to assign output to the 'source' variable
         # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
         # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
-        source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a>"
+        source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
         # Generate the tags 
         tags = f"Execution #{inmate.Execution}", f"Index: {inmate.Index}"
         # Send the API call (the post will be queued)  
@@ -148,7 +148,7 @@ if (len(df_datesorted.loc[(len(df_datesorted.index))-251:300])) == 23:
         # use an f-string to assign output to the 'source' variable
         # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
         # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
-        source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a>"
+        source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
         # Generate the tags 
         tags = f"Execution #{inmate.Execution}", f"Index: {inmate.Index}"
         # Send the API call (the post will be queued)  
@@ -165,7 +165,7 @@ if (len(df_datesorted.loc[299:0])) <= 300:
         # use an f-string to assign output to the 'source' variable
         # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
         # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
-        source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a>"
+        source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
         # Generate the tags 
         tags = f"Execution #{inmate.Execution}", f"Index: {inmate.Index}"
         # Send the API call (the post will be queued)  
