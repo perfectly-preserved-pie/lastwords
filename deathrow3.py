@@ -51,6 +51,16 @@ def get_last_statement(statement_url: str) -> str:
     text = next(iter(statement), "")
     return " ".join(text.split())
 
+# Create a function to test if the offender statement is an HTML page or JPG image 
+# Because some offenders' information is uploaded as a JPG scan and not an HTML page
+# if we get a 404, we can assume the URL needs to be rewritten to end in .jpg instead of .html
+def check(url):
+    header = requests.head(url, verify=False)
+    if header.status_code == 404:
+        url = url.replace(".html", ".jpg")
+        return f"{url}"
+    elif header.status_code == 200: # return the unmodified URL if the test was successful
+        return f"{url}"
 
 df = pd.read_html(response.content, flavor="bs4")
 df = pd.concat(df)
@@ -64,6 +74,10 @@ df["Offender Information"] = df[
     ["Last Name", 'First Name']
 ].apply(lambda x: f"{base_url}/dr_info/{clean(x)}.html", axis=1)
 
+# Apply our previously created function to the Pandas column to rewrite the URL to .jpg if needed
+# https://stackoverflow.com/a/54145945
+df["Offender Information"] = df["Offender Information"].apply(check)
+
 df["Last Statement URL"] = df[
     ["Last Name", 'First Name']
 ].apply(lambda x: f"{base_url}/dr_info/{clean(x)}last.html", axis=1)
@@ -75,14 +89,6 @@ offender_data = list(
         df["Last Statement URL"],
     )
 )
-
-# Some offenders' information is uploaded as a JPG scan and not an HTML page
-# If the link is broken, we can assume that the correct URL points to a JPG and not HTML
-# Go through each Offender Information link and if it's broken, change the URL from .html to .jpg
-for link in (df["Offender Information"].tail()):
-    header = (requests.head(link, verify=False))
-    if header == "<Response [404]>":
-        link = link.replace(".html", ".jpg")
 
 statements = []
 for item in offender_data:
