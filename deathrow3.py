@@ -2,12 +2,15 @@
 # A fun wholesome project written by Sahib Bhai during the Holiday Season 2021 🎅🎄
 # https://github.com/perfectly-preserved-pie/lastwords
 
+from os import replace
 import random
 import time
 import pytumblr
 import pandas as pd
 import requests
 from lxml import html
+
+
 
 # Tumblr API stuff
 # This needs to be done first manually: https://github.com/tumblr/pytumblr/blob/master/interactive_console.py
@@ -72,6 +75,14 @@ offender_data = list(
         df["Last Statement URL"],
     )
 )
+
+# Some offenders' information is uploaded as a JPG scan and not an HTML page
+# If the link is broken, we can assume that the correct URL points to a JPG and not HTML
+# Go through each Offender Information link and if it's broken, change the URL from .html to .jpg
+for link in (df["Offender Information"].tail()):
+    header = (requests.head(link, verify=False))
+    if header == "<Response [404]>":
+        link = link.replace(".html", ".jpg")
 
 statements = []
 for item in offender_data:
