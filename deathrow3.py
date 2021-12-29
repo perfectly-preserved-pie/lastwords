@@ -9,6 +9,8 @@ import pandas as pd
 import requests
 from lxml import html
 
+
+
 # Tumblr API stuff
 # This needs to be done first manually: https://github.com/tumblr/pytumblr/blob/master/interactive_console.py
 # Create the PyTumblr client
@@ -61,6 +63,14 @@ df["Offender Information"] = df[
     ["Last Name", 'First Name']
 ].apply(lambda x: f"{base_url}/dr_info/{clean(x)}.html", axis=1)
 
+# Go through each Offender Information link and if it's broken, change the URL from .html to .jpg
+for link in df["Offender Information"]:
+    text = (requests.get(link, verify=False)).content
+    if text == "The resource you are looking for has been removed, had its name changed, or is temporarily unavailable.":
+        link = df[
+            ["Last Name", 'First Name']
+        ].apply(lambda x: f"{base_url}/dr_info/{clean(x)}.jpg", axis=1)
+    
 df["Last Statement URL"] = df[
     ["Last Name", 'First Name']
 ].apply(lambda x: f"{base_url}/dr_info/{clean(x)}last.html", axis=1)
