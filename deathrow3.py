@@ -2,12 +2,15 @@
 # A fun wholesome project written by Sahib Bhai during the Holiday Season 2021 🎅🎄
 # https://github.com/perfectly-preserved-pie/lastwords
 
+from os import replace
 import random
 import time
 import pytumblr
 import pandas as pd
 import requests
 from lxml import html
+
+
 
 # Tumblr API stuff
 # This needs to be done first manually: https://github.com/tumblr/pytumblr/blob/master/interactive_console.py
@@ -48,6 +51,16 @@ def get_last_statement(statement_url: str) -> str:
     text = next(iter(statement), "")
     return " ".join(text.split())
 
+# Create a function to test if the offender statement is an HTML page or JPG image 
+# Because some offenders' information is uploaded as a JPG scan and not an HTML page
+# if we get a 404, we can assume the URL needs to be rewritten to end in .jpg instead of .html
+def check(url):
+    header = requests.head(url, verify=False)
+    if header.status_code == 404:
+        url = url.replace(".html", ".jpg")
+        return f"{url}"
+    elif header.status_code == 200: # return the unmodified URL if the test was successful
+        return f"{url}"
 
 df = pd.read_html(response.content, flavor="bs4")
 df = pd.concat(df)
@@ -60,6 +73,10 @@ df.rename(
 df["Offender Information"] = df[
     ["Last Name", 'First Name']
 ].apply(lambda x: f"{base_url}/dr_info/{clean(x)}.html", axis=1)
+
+# Apply our previously created function to the Pandas column to rewrite the URL to .jpg if needed
+# https://stackoverflow.com/a/54145945
+df["Offender Information"] = df["Offender Information"].apply(check)
 
 df["Last Statement URL"] = df[
     ["Last Name", 'First Name']
