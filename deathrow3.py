@@ -74,14 +74,6 @@ df["Offender Information"] = df[
     ["Last Name", 'First Name']
 ].apply(lambda x: f"{base_url}/dr_info/{clean(x)}.html", axis=1)
 
-# Go through each Offender Information link and if it's broken, change the URL from .html to .jpg
-for link in df["Offender Information"]:
-    text = (requests.get(link, verify=False)).content
-    if text == "The resource you are looking for has been removed, had its name changed, or is temporarily unavailable.":
-        link = df[
-            ["Last Name", 'First Name']
-        ].apply(lambda x: f"{base_url}/dr_info/{clean(x)}.jpg", axis=1)
-    
 # Apply our previously created function to the Pandas column to rewrite the URL to .jpg if needed
 # https://stackoverflow.com/a/54145945
 df["Offender Information"] = df["Offender Information"].apply(check)
