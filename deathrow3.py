@@ -99,9 +99,6 @@ for item in offender_data:
 
 df["Last Statement"] = statements
 
-# end stolen code. 
-# from now on THIS IS ALL ME BABY WOOOOOOO
-
 # Remove all inmates that don't have a last statement
 # https://stackoverflow.com/a/43399866
 df = df[~df["Last Statement"].isin(['This inmate declined to make a last statement.','No statement was made.','No statement given.','None','(Written statement)','Spoken: No','Spoken: No.','No','No last statement.'])]
