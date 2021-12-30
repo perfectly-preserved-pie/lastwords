@@ -113,6 +113,9 @@ df = df[~df['Last Statement'].isin(keywords)]
 # https://hackersandslackers.com/pandas-dataframe-drop/
 df.dropna(axis=0,how='any',inplace=True)
 
+# Reindex the dataframe so the rows are sequential again
+df.reset_index(drop=True, inplace=True)
+
 # Sort the df by oldest executions first
 # https://stackoverflow.com/a/67689015
 # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sort_values.html
