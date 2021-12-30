@@ -141,7 +141,8 @@ if (len(df.loc[0:103])) <= 250:
         source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
         # Generate the tags 
         tags = f"Execution #{inmate.Execution}", f"Index {inmate.Index}"
-        # Send the API call (the post will be queued)  
+        # Send the API call (the post will be queued) 
+        print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=tags) 
 else:
     print("The number of posts is too high. No API call will be sent.")
