@@ -13,8 +13,6 @@ from lxml import html
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
-
 # Tumblr API stuff
 # This needs to be done first manually: https://github.com/tumblr/pytumblr/blob/master/interactive_console.py
 # Create the PyTumblr client
