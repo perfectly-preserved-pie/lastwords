@@ -100,7 +100,6 @@ for item in offender_data:
     *names, url = item
     print(f"Fetching statement for {' '.join(names)}...")
     statements.append(get_last_statement(statement_url=url))
-    time.sleep(random.randint(1, 4))
 
 df["Last Statement"] = statements
 
@@ -110,7 +109,7 @@ print("Removing all inmates without a last statement...")
 df = df[~df["Last Statement"].isin(['This inmate declined to make a last statement.','No statement was made.','No statement given.','None','(Written statement)','Spoken: No','Spoken: No.','No','No last statement.'])]
 # Clean up rows with empty cells
 # https://www.w3schools.com/python/pandas/pandas_cleaning_empty_cells.asp
-df.dropna(inplace = True)
+#df = df.dropna(inplace = True)
 
 # Sort the df by oldest executions first
 # https://stackoverflow.com/a/67689015
