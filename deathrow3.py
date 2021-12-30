@@ -76,8 +76,10 @@ df["Offender Information"] = df[
 
 # Apply our previously created function to the Pandas column to rewrite the URL to .jpg if needed
 # https://stackoverflow.com/a/54145945
+print("Checking Offender Information URLs and rewriting if necessary...")
 df["Offender Information"] = df["Offender Information"].apply(check)
 
+print("Cleaning up Last Statement URLs...")
 df["Last Statement URL"] = df[
     ["Last Name", 'First Name']
 ].apply(lambda x: f"{base_url}/dr_info/{clean(x)}last.html", axis=1)
@@ -101,6 +103,7 @@ df["Last Statement"] = statements
 
 # Remove all inmates that don't have a last statement
 # https://stackoverflow.com/a/43399866
+print("Removing all inmates without a last statement...")
 df = df[~df["Last Statement"].isin(['This inmate declined to make a last statement.','No statement was made.','No statement given.','None','(Written statement)','Spoken: No','Spoken: No.','No','No last statement.'])]
 # Clean up rows with empty cells
 # https://www.w3schools.com/python/pandas/pandas_cleaning_empty_cells.asp
@@ -109,6 +112,7 @@ df.dropna(inplace = True)
 # Sort the df by oldest executions first
 # https://stackoverflow.com/a/67689015
 # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sort_values.html
+print("Sorting dataframe by oldest execution first...")
 df_datesorted = df.sort_values(by="Date", key=pd.to_datetime, ascending=True)
 
 # Iterate over each inmate in the dataframe and use .loc to select specific rows
@@ -135,7 +139,8 @@ if (len(df_datesorted.loc[(len(df_datesorted.index)):(len(df_datesorted.index))-
 else:
     print("The number of posts is too high. No API call will be sent.")
 
-# Wait 24 hours until our post API limit resets    
+# Wait 24 hours until our post API limit resets
+print("Sleeping for 24 hours...")    
 time.sleep(86400)
 
 # Post the next 23 posts
