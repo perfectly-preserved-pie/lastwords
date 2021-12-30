@@ -107,7 +107,7 @@ df["Last Statement"] = statements
 # We'll first create a list of keywords indicating no last statement to be rewritten as NaN
 # https://stackoverflow.com/a/43399866
 print("Removing all inmates without a last statement...")
-keywords = ['This inmate declined to make a last statement.','No statement was made.','No statement given.','None','(Written statement)','Spoken: No','Spoken: No.','No','No last statement.']
+keywords = ['This inmate declined to make a last statement.','No statement was made.','No statement given.','None','(Written statement)','Spoken: No','Spoken: No.','No','No last statement.','No, I have no final statement.']
 df = df[~df['Last Statement'].isin(keywords)]
 # Now we drop all rows containing NaN
 # https://hackersandslackers.com/pandas-dataframe-drop/
