@@ -125,13 +125,13 @@ df.sort_values(by="Date", key=pd.to_datetime, ascending=True, inplace=True)
 # Iterate over each inmate in the dataframe and use .loc to select specific rows
 # https://towardsdatascience.com/how-to-use-loc-and-iloc-for-selecting-data-in-pandas-bd09cb4c3d79
 # Also, we're gonna hit Tumblr's API limits as it stands: 
-#    1. 250 posts/day.
+#    1. Can only post 250 posts/day to either the queue or published
 #    2. Can only have 300 posts in the queue at once.
-# We have 573 inmates in the df. Publishing 250 of them brings the remainder down to 323, which means we're just 23 over the max queue limit. Annoying!
-# My shitty solution is to publish the first 250 executions (from the total index to total index minus 250) on day 1, then wait 24 hours, then publish the next 23, bringing the remainder to 300 and having that 300 be queued.
+# We have 403 inmates in the df. Publishing 103 immediately brings the remainder down to 300. We can then queue the remaining 300
+# My shitty solution is to publish the first 103 oldest executions on day 1, then wait 24 hours, then queue the remaining 300
 # If there are 250 or less posts, we're good to use the API
-if (len(df.loc[(len(df.index)):(len(df.index))-250])) <= 250:
-    for inmate in df.loc[(len(df.index)):(len(df.index))-250].itertuples():
+if (len(df.loc[0:103])) <= 250:
+    for inmate in df.loc[0:103].itertuples():
         # Generate the last statement for each inmate
         quote = inmate[11]
         # Generate the rest of the "source" information
@@ -150,10 +150,10 @@ else:
 print("Sleeping for 24 hours...")    
 time.sleep(86400)
 
-# Post the next 23 posts
-# we're expecting 23 posts, so add an if check
-if (len(df.loc[(len(df.index))-251:300])) == 23:
-    for inmate in df.loc[(len(df.index))-251:300].itertuples():
+# Queue the remaining 300 posts
+# we're expecting 300 posts, so add an if check
+if (len(df.loc[104:df.last_valid_index()])) == 300:
+    for inmate in df.loc[104:df.last_valid_index()].itertuples():
         # Generate the last statement for each inmate
         quote = inmate[11]
         # Generate the rest of the "source" information
@@ -164,23 +164,6 @@ if (len(df.loc[(len(df.index))-251:300])) == 23:
         # Generate the tags 
         tags = f"Execution #{inmate.Execution}", f"Index {inmate.Index}"
         # Send the API call (the post will be queued)  
-        client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=tags) 
+        client.create_quote('lastwords2', state="queue", quote=quote, source=source, tags=tags) 
 else:
-    print("The number of expected posts was NOT 23. No API call will be sent.")
-
-# Queue the remaining posts from index 299 to the last index (should be 300 rows)
-if (len(df.loc[299:0])) <= 300:
-    for inmate in df.loc[299:0].itertuples():
-        # Generate the last statement for each inmate
-        quote = inmate[11]
-        # Generate the rest of the "source" information
-        # use an f-string to assign output to the 'source' variable
-        # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
-        # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
-        source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
-        # Generate the tags 
-        tags = f"Execution #{inmate.Execution}", f"Index {inmate.Index}"
-        # Send the API call (the post will be queued)  
-        client.create_quote('lastwords2', state="queue", quote=quote, source=source, tags=tags)
-else:
-    print("The number of queued expected posts was not less than 300. No API call will be sent.")
+    print("The number of expected posts was NOT 300. No API call will be sent.")
