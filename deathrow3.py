@@ -165,6 +165,7 @@ if (len(df.loc[104:df.last_valid_index()])) == 300:
         # Generate the tags 
         tags = f"Execution #{inmate.Execution}", f"Index {inmate.Index}"
         # Send the API call (the post will be queued)  
+        print(f"Queueing the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         client.create_quote('lastwords2', state="queue", quote=quote, source=source, tags=tags) 
 else:
     print("The number of expected posts was NOT 300. No API call will be sent.")
