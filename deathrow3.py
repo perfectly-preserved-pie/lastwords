@@ -120,7 +120,7 @@ df.reset_index(drop=True, inplace=True)
 # https://stackoverflow.com/a/67689015
 # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sort_values.html
 print("Sorting dataframe by oldest execution first...")
-df_datesorted = df.sort_values(by="Date", key=pd.to_datetime, ascending=True)
+df.sort_values(by="Date", key=pd.to_datetime, ascending=True, inplace=True)
 
 # Iterate over each inmate in the dataframe and use .loc to select specific rows
 # https://towardsdatascience.com/how-to-use-loc-and-iloc-for-selecting-data-in-pandas-bd09cb4c3d79
@@ -130,8 +130,8 @@ df_datesorted = df.sort_values(by="Date", key=pd.to_datetime, ascending=True)
 # We have 573 inmates in the df. Publishing 250 of them brings the remainder down to 323, which means we're just 23 over the max queue limit. Annoying!
 # My shitty solution is to publish the first 250 executions (from the total index to total index minus 250) on day 1, then wait 24 hours, then publish the next 23, bringing the remainder to 300 and having that 300 be queued.
 # If there are 250 or less posts, we're good to use the API
-if (len(df_datesorted.loc[(len(df_datesorted.index)):(len(df_datesorted.index))-250])) <= 250:
-    for inmate in df_datesorted.loc[(len(df_datesorted.index)):(len(df_datesorted.index))-250].itertuples():
+if (len(df.loc[(len(df.index)):(len(df.index))-250])) <= 250:
+    for inmate in df.loc[(len(df.index)):(len(df.index))-250].itertuples():
         # Generate the last statement for each inmate
         quote = inmate[11]
         # Generate the rest of the "source" information
@@ -152,8 +152,8 @@ time.sleep(86400)
 
 # Post the next 23 posts
 # we're expecting 23 posts, so add an if check
-if (len(df_datesorted.loc[(len(df_datesorted.index))-251:300])) == 23:
-    for inmate in df_datesorted.loc[(len(df_datesorted.index))-251:300].itertuples():
+if (len(df.loc[(len(df.index))-251:300])) == 23:
+    for inmate in df.loc[(len(df.index))-251:300].itertuples():
         # Generate the last statement for each inmate
         quote = inmate[11]
         # Generate the rest of the "source" information
@@ -169,8 +169,8 @@ else:
     print("The number of expected posts was NOT 23. No API call will be sent.")
 
 # Queue the remaining posts from index 299 to the last index (should be 300 rows)
-if (len(df_datesorted.loc[299:0])) <= 300:
-    for inmate in df_datesorted.loc[299:0].itertuples():
+if (len(df.loc[299:0])) <= 300:
+    for inmate in df.loc[299:0].itertuples():
         # Generate the last statement for each inmate
         quote = inmate[11]
         # Generate the rest of the "source" information
