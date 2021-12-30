@@ -104,12 +104,14 @@ for item in offender_data:
 df["Last Statement"] = statements
 
 # Remove all inmates that don't have a last statement
+# We'll first create a list of keywords indicating no last statement to be rewritten as NaN
 # https://stackoverflow.com/a/43399866
 print("Removing all inmates without a last statement...")
-df = df[~df["Last Statement"].isin(['This inmate declined to make a last statement.','No statement was made.','No statement given.','None','(Written statement)','Spoken: No','Spoken: No.','No','No last statement.'])]
-# Clean up rows with empty cells
-# https://www.w3schools.com/python/pandas/pandas_cleaning_empty_cells.asp
-#df = df.dropna(inplace = True)
+keywords = ['This inmate declined to make a last statement.','No statement was made.','No statement given.','None','(Written statement)','Spoken: No','Spoken: No.','No','No last statement.']
+df = df[~df['Last Statement'].isin(keywords)]
+# Now we drop all rows containing NaN
+# https://hackersandslackers.com/pandas-dataframe-drop/
+df.dropna(axis=0,how='any',inplace=True)
 
 # Sort the df by oldest executions first
 # https://stackoverflow.com/a/67689015
