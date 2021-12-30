@@ -9,6 +9,9 @@ import pytumblr
 import pandas as pd
 import requests
 from lxml import html
+# Suppress SSL verification warnings
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 
