@@ -125,6 +125,21 @@ df.reset_index(drop=True, inplace=True)
 print("Sorting dataframe by oldest execution first...")
 df.sort_values(by="Date", key=pd.to_datetime, ascending=True, inplace=True)
 
+# Calculate some interesting statistics
+oldest_inmate = df.Age.max()
+youngest_inmate = df.Age.min()
+average_age = int(df.Age.mean()) # https://stackoverflow.com/a/3398439
+jesus_statements = len(df[df['Last Statement'].str.contains("Jesus|Christ")]) # https://stackoverflow.com/a/31583241
+allah_statements = len(df[df['Last Statement'].str.contains("Allah")])
+
+print(f"{len(df.index)} total last statements.")
+print(f"{empty_statements} inmates declined to give a last statement.")
+print(f"The oldest executed inmate was {oldest_inmate} years old.")
+print(f"The youngest executed inmate was {youngest_inmate} years old.")
+print(f"The average age at execution was {average_age} years old.")
+print(f"{jesus_statements} inmates mentioned Jesus Christ in their last statement.")
+print(f"{allah_statements} inmates mentioned Allah in their last statement.")
+
 # Iterate over each inmate in the dataframe and use .loc to select specific rows
 # https://towardsdatascience.com/how-to-use-loc-and-iloc-for-selecting-data-in-pandas-bd09cb4c3d79
 # Also, we're gonna hit Tumblr's API limits as it stands: 
