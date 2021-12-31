@@ -137,8 +137,8 @@ print(f"{empty_statements} inmates declined to give a last statement.")
 print(f"The oldest executed inmate was {oldest_inmate} years old.")
 print(f"The youngest executed inmate was {youngest_inmate} years old.")
 print(f"The average age at execution was {average_age} years old.")
-print(f"{jesus_statements} inmates mentioned Jesus Christ in their last statement.")
-print(f"{allah_statements} inmates mentioned Allah in their last statement.")
+print(f"{jesus_statements} inmates mentioned Jesus Christ at least once in their last statement.")
+print(f"{allah_statements} inmates mentioned Allah at least once in their last statement.")
 
 # Iterate over each inmate in the dataframe and use .loc to select specific rows
 # https://towardsdatascience.com/how-to-use-loc-and-iloc-for-selecting-data-in-pandas-bd09cb4c3d79
