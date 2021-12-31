@@ -108,8 +108,13 @@ print("Removing all inmates without a last statement...")
 keywords = ['This inmate declined to make a last statement.','No statement was made.','No statement given.','None','(Written statement)','Spoken: No','Spoken: No.','No','No last statement.','No, I have no final statement.']
 df = df[~df['Last Statement'].isin(keywords)]
 # Now we drop all rows containing NaN
+# First display the number of rows to remove
+empty_statements = df.isnull().sum().sum()
+print(f"Removing {empty_statements} rows with empty last statements...")
+# Now drop em
 # https://hackersandslackers.com/pandas-dataframe-drop/
 df.dropna(axis=0,how='any',inplace=True)
+print(f"{len(df.index)} rows remain.")
 
 # Reindex the dataframe so the rows are sequential again
 df.reset_index(drop=True, inplace=True)
