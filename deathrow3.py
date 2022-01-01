@@ -141,13 +141,16 @@ age_groups_count = df.groupby(age_groups)['Age'].count()
 age_plot = age_groups_count.plot(kind='bar', title='Age Distribution of Executed Inmates in Texas, 1982-2021', ylabel='Number of Inmates', xlabel='Age Group')
 # Annotate the bars
 # https://stackoverflow.com/a/67561982
-age_plot.bar_label(age_plot.containers[0], label_type='edge')
+age_plot.bar_label(age_plot.containers[0], label_type='edge')\
+# Save the plot as a PNG
+plt.savefig("/tmp/age_distribution.png")
 
 # Racial distribution
 race_count = df.groupby('Race')['Execution'].count()
 race_plot = race_count.plot(kind='bar', title='Racial Distribution of Executed Inmates in Texas, 1982-2021', ylabel='Number of Inmates', xlabel='Race')
 race_plot.bar_label(race_plot.containers[0], label_type='edge')
-
+# Save the plot as a PNG
+plt.savefig("/tmp/racial_distribution.png")
 
 print(f"{len(df.index)} total last statements.")
 print(f"{empty_statements} inmates declined to give a last statement.")
