@@ -6,6 +6,7 @@ from os import replace
 import random
 import time
 import pytumblr
+from imgurpython import ImgurClient
 import pandas as pd
 import requests
 from lxml import html
@@ -30,6 +31,16 @@ client = pytumblr.TumblrRestClient(
     f"{consumer_secret}",
     f"{oauth_token}",
     f"{oauth_secret}",
+)
+
+# Imgur API stuff for hosting the plot graphs
+# https://github.com/Imgur/imgurpython#library-usage
+client_id = input("Please enter your Imgur client ID:\n")
+client_secret = input("Please enter your Imgur client secret:\n")
+
+client = ImgurClient(
+    f"{client_id}",
+    f"{client_secret}",
 )
 
 # TDCJ stuff
@@ -161,6 +172,10 @@ print(f"The youngest executed inmate was {youngest_inmate['First Name']} {younge
 print(f"The average age at execution was {average_age} years old.")
 
 # Create a post with the statistics and plots
+# Upload the PNGs to Imgur and get the resulting link
+age_distribution_link = client.upload_from_path('/tmp/age_distribution.png')['link']
+racial_distribution_link = client.upload_from_path('/tmp/racial_distribution.png')['link']
+
 # Set up the body
 # https://www.techbeamers.com/python-multiline-string/
 body = f"""<ul> 
@@ -171,7 +186,7 @@ body = f"""<ul>
     <li>The oldest executed inmate was {oldest_inmate['First Name']} {oldest_inmate['Last Name']} at {oldest_inmate.Age} years old.</li>
     <li>The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.</li>
     <li>The average age at execution was {average_age} years old.</li>
-</ul>"""
+</ul><br></br><h1>Age Distribution of Executed Inmates</h1><img src="{age_distribution_link}" alt="Age Distribution of Executed Inmates, Texas 1982-2021"><br></br><h1>Racial Distribution of Executed Inmates</h1><img src="{racial_distribution_link}" alt="Racial Distribution of Executed Inmates, Texas 1982-2021">"""
 client.create_text('lastwords2', state="published", slug="statistics", title="Interesting Statistics", body=body)
 
 # Iterate over each inmate in the dataframe and use .loc to select specific rows
