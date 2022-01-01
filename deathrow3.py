@@ -141,6 +141,7 @@ df.sort_values(by="Date", key=pd.to_datetime, ascending=True, inplace=True)
 
 # Calculate some interesting statistics
 # https://moonbooks.org/Articles/How-to-find-a-minimum-value-in-a-pandas-dataframe-column-/
+print("Calculating statistics...")
 oldest_inmate = df.loc[df.Age.idxmax()] # use idxmax to find the index of the oldest age, then use loc to find that whole entry
 youngest_inmate = df.loc[df.Age.idxmin()]
 average_age = int(df.Age.mean()) # https://stackoverflow.com/a/3398439
@@ -157,6 +158,7 @@ age_plot = age_groups_count.plot(kind='bar', title='Age Distribution of Executed
 # https://stackoverflow.com/a/67561982
 age_plot.bar_label(age_plot.containers[0], label_type='edge')
 # Save the plot as a PNG
+print("Saving the plotted age graph...")
 plt.savefig("/tmp/age_distribution.png")
 
 # Racial distribution
@@ -164,6 +166,7 @@ race_count = df.groupby('Race')['Execution'].count()
 race_plot = race_count.plot(kind='bar', title='Racial Distribution of Executed Inmates in Texas, 1982-2021', ylabel='Number of Inmates', xlabel='Race')
 race_plot.bar_label(race_plot.containers[0], label_type='edge')
 # Save the plot as a PNG
+print("Saving the plotted race graph...")
 plt.savefig("/tmp/racial_distribution.png")
 
 print(f"{len(df.index)} total last statements.")
@@ -176,6 +179,7 @@ print(f"The average age at execution was {average_age} years old.")
 
 # Create a post with the statistics and plots
 # Upload the PNGs to Imgur and get the resulting link
+print("Uploading graphs to Imgur...")
 age_distribution_link = client.upload_from_path('/tmp/age_distribution.png')['link']
 racial_distribution_link = client.upload_from_path('/tmp/racial_distribution.png')['link']
 
