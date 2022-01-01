@@ -140,6 +140,7 @@ age_groups = pd.cut(df.Age, bins=[18, 20, 29, 39, 49, 59, 69, 79, 89], labels=['
 age_groups_count = df.groupby(age_groups)['Age'].count()
 plot = age_groups_count.plot(kind='bar', title='Age Distribution of Executed Inmates in Texas, 1982-2021', ylabel='Number of Inmates', xlabel='Age Group')
 # Annotate the bars
+# https://stackoverflow.com/a/67561982
 plot.bar_label(plot.containers[0], label_type='edge')
 
 print(f"{len(df.index)} total last statements.")
