@@ -132,24 +132,30 @@ youngest_inmate = df.loc[df.Age.idxmin()]
 average_age = int(df.Age.mean()) # https://stackoverflow.com/a/3398439
 jesus_statements = len(df[df['Last Statement'].str.contains("Jesus|Christ")]) # https://stackoverflow.com/a/31583241
 allah_statements = len(df[df['Last Statement'].str.contains("Allah")])
-# Create age groups
+# Age distribution
 # https://riptutorial.com/pandas/example/5965/grouping-numbers
 age_groups = pd.cut(df.Age, bins=[18, 20, 29, 39, 49, 59, 69, 79, 89], labels=['18 to 20 years old', '21 to 29 years old', '30 to 39 years old', '40 to 49 years old', '50 to 59 years old', '60 to 69 years old', '70 to 79 years old', '80 to 89 years old'])
 # Plot the groups
 # https://stackoverflow.com/a/40314011
 age_groups_count = df.groupby(age_groups)['Age'].count()
-plot = age_groups_count.plot(kind='bar', title='Age Distribution of Executed Inmates in Texas, 1982-2021', ylabel='Number of Inmates', xlabel='Age Group')
+age_plot = age_groups_count.plot(kind='bar', title='Age Distribution of Executed Inmates in Texas, 1982-2021', ylabel='Number of Inmates', xlabel='Age Group')
 # Annotate the bars
 # https://stackoverflow.com/a/67561982
-plot.bar_label(plot.containers[0], label_type='edge')
+age_plot.bar_label(age_plot.containers[0], label_type='edge')
+
+# Racial distribution
+race_count = df.groupby('Race')['Execution'].count()
+race_plot = race_count.plot(kind='bar', title='Racial Distribution of Executed Inmates in Texas, 1982-2021', ylabel='Number of Inmates', xlabel='Race')
+race_plot.bar_label(race_plot.containers[0], label_type='edge')
+
 
 print(f"{len(df.index)} total last statements.")
 print(f"{empty_statements} inmates declined to give a last statement.")
+print(f"{jesus_statements} inmates mentioned Jesus Christ at least once in their last statement.")
+print(f"{allah_statements} inmates mentioned Allah at least once in their last statement.")
 print(f"The oldest executed inmate was {oldest_inmate['First Name']} {oldest_inmate['Last Name']} at {oldest_inmate.Age} years old.")
 print(f"The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.")
 print(f"The average age at execution was {average_age} years old.")
-print(f"{jesus_statements} inmates mentioned Jesus Christ at least once in their last statement.")
-print(f"{allah_statements} inmates mentioned Allah at least once in their last statement.")
 
 # Iterate over each inmate in the dataframe and use .loc to select specific rows
 # https://towardsdatascience.com/how-to-use-loc-and-iloc-for-selecting-data-in-pandas-bd09cb4c3d79
@@ -169,7 +175,7 @@ if (len(df.loc[0:103])) <= 250:
         # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
         source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
         # Generate the tags 
-        tags = f"Execution #{inmate.Execution}", f"Index {inmate.Index}"
+        tags = f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"
         # Send the API call (the post will be queued) 
         print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=tags) 
@@ -192,7 +198,7 @@ if (len(df.loc[104:df.last_valid_index()])) == 300:
         # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
         source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
         # Generate the tags 
-        tags = f"Execution #{inmate.Execution}", f"Index {inmate.Index}"
+        tags = f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"
         # Send the API call (the post will be queued)  
         print(f"Queueing the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         client.create_quote('lastwords2', state="queue", quote=quote, source=source, tags=tags) 
