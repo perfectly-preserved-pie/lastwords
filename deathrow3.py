@@ -141,7 +141,7 @@ age_groups_count = df.groupby(age_groups)['Age'].count()
 age_plot = age_groups_count.plot(kind='bar', title='Age Distribution of Executed Inmates in Texas, 1982-2021', ylabel='Number of Inmates', xlabel='Age Group')
 # Annotate the bars
 # https://stackoverflow.com/a/67561982
-age_plot.bar_label(age_plot.containers[0], label_type='edge')\
+age_plot.bar_label(age_plot.containers[0], label_type='edge')
 # Save the plot as a PNG
 plt.savefig("/tmp/age_distribution.png")
 
@@ -159,6 +159,20 @@ print(f"{allah_statements} inmates mentioned Allah at least once in their last s
 print(f"The oldest executed inmate was {oldest_inmate['First Name']} {oldest_inmate['Last Name']} at {oldest_inmate.Age} years old.")
 print(f"The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.")
 print(f"The average age at execution was {average_age} years old.")
+
+# Create a post with the statistics and plots
+# Set up the body
+# https://www.techbeamers.com/python-multiline-string/
+body = f"""<ul> 
+    <li>{len(df.index)} total last statements.</li>
+    <li>{empty_statements} inmates declined to give a last statement.</li>
+    <li>{jesus_statements} inmates mentioned Jesus Christ at least once in their last statement.</li>
+    <li>{allah_statements} inmates mentioned Allah at least once in their last statement.</li>
+    <li>The oldest executed inmate was {oldest_inmate['First Name']} {oldest_inmate['Last Name']} at {oldest_inmate.Age} years old.</li>
+    <li>The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.</li>
+    <li>The average age at execution was {average_age} years old.</li>
+</ul>"""
+client.create_text('lastwords2', state="published", slug="statistics", title="Interesting Statistics", body=body)
 
 # Iterate over each inmate in the dataframe and use .loc to select specific rows
 # https://towardsdatascience.com/how-to-use-loc-and-iloc-for-selecting-data-in-pandas-bd09cb4c3d79
