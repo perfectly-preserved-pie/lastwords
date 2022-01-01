@@ -126,16 +126,26 @@ print("Sorting dataframe by oldest execution first...")
 df.sort_values(by="Date", key=pd.to_datetime, ascending=True, inplace=True)
 
 # Calculate some interesting statistics
-oldest_inmate = df.Age.max()
-youngest_inmate = df.Age.min()
+# https://moonbooks.org/Articles/How-to-find-a-minimum-value-in-a-pandas-dataframe-column-/
+oldest_inmate = df.loc[df.Age.idxmax()] # use idxmax to find the index of the oldest age, then use loc to find that whole entry
+youngest_inmate = df.loc[df.Age.idxmin()]
 average_age = int(df.Age.mean()) # https://stackoverflow.com/a/3398439
 jesus_statements = len(df[df['Last Statement'].str.contains("Jesus|Christ")]) # https://stackoverflow.com/a/31583241
 allah_statements = len(df[df['Last Statement'].str.contains("Allah")])
+# Create age groups
+# https://riptutorial.com/pandas/example/5965/grouping-numbers
+age_groups = pd.cut(df.Age, bins=[18, 20, 29, 39, 49, 59, 69, 79, 89], labels=['18 to 20 years old', '21 to 29 years old', '30 to 39 years old', '40 to 49 years old', '50 to 59 years old', '60 to 69 years old', '70 to 79 years old', '80 to 89 years old'])
+# Plot the groups
+# https://stackoverflow.com/a/40314011
+age_groups_count = df.groupby(age_groups)['Age'].count()
+plot = age_groups_count.plot(kind='bar', title='Age Distribution of Executed Inmates in Texas, 1982-2021', ylabel='Number of Inmates', xlabel='Age Group')
+# Annotate the bars
+plot.bar_label(plot.containers[0], label_type='edge')
 
 print(f"{len(df.index)} total last statements.")
 print(f"{empty_statements} inmates declined to give a last statement.")
-print(f"The oldest executed inmate was {oldest_inmate} years old.")
-print(f"The youngest executed inmate was {youngest_inmate} years old.")
+print(f"The oldest executed inmate was {oldest_inmate['First Name']} {oldest_inmate['Last Name']} at {oldest_inmate.Age} years old.")
+print(f"The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.")
 print(f"The average age at execution was {average_age} years old.")
 print(f"{jesus_statements} inmates mentioned Jesus Christ at least once in their last statement.")
 print(f"{allah_statements} inmates mentioned Allah at least once in their last statement.")
