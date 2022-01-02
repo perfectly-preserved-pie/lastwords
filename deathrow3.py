@@ -30,7 +30,7 @@ consumer_secret = input("Please enter the consumer secret:\n")
 oauth_token = input("Please enter the OAuth token:\n")
 oauth_secret = input("Please enter the OAuth secret:\n")
 
-client = pytumblr.TumblrRestClient(
+tumblr_client = pytumblr.TumblrRestClient(
     f"{consumer_key}",
     f"{consumer_secret}",
     f"{oauth_token}",
@@ -42,7 +42,7 @@ client = pytumblr.TumblrRestClient(
 client_id = input("Please enter your Imgur client ID:\n")
 client_secret = input("Please enter your Imgur client secret:\n")
 
-client = ImgurClient(
+imgur_client = ImgurClient(
     f"{client_id}",
     f"{client_secret}",
 )
@@ -127,7 +127,7 @@ empty_statements = df.isnull().sum().sum()
 print(f"Removing {empty_statements} rows with empty last statements...")
 # Now drop em
 # https://hackersandslackers.com/pandas-dataframe-drop/
-df.dropna(axis=0,how='any',inplace=True)
+df.dropna(axis=0,how='any',subset=['Last Statement'],inplace=True)
 print(f"{len(df.index)} rows remain.")
 
 # Reindex the dataframe so the rows are sequential again
@@ -180,8 +180,8 @@ print(f"The average age at execution was {average_age} years old.")
 # Create a post with the statistics and plots
 # Upload the PNGs to Imgur and get the resulting link
 print("Uploading graphs to Imgur...")
-age_distribution_link = client.upload_from_path('/tmp/age_distribution.png')['link']
-racial_distribution_link = client.upload_from_path('/tmp/racial_distribution.png')['link']
+age_distribution_link = imgur_client.upload_from_path('/tmp/age_distribution.png')['link']
+racial_distribution_link = imgur_client.upload_from_path('/tmp/racial_distribution.png')['link']
 
 # Set up the body
 # https://www.techbeamers.com/python-multiline-string/
@@ -194,7 +194,7 @@ body = f"""<ul>
     <li>The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.</li>
     <li>The average age at execution was {average_age} years old.</li>
 </ul><br></br><h1>Age Distribution of Executed Inmates</h1><img src="{age_distribution_link}" alt="Age Distribution of Executed Inmates, Texas 1982-2021"><br></br><h1>Racial Distribution of Executed Inmates</h1><img src="{racial_distribution_link}" alt="Racial Distribution of Executed Inmates, Texas 1982-2021">"""
-client.create_text('lastwords2', state="published", slug="statistics", title="Interesting Statistics", body=body)
+tumblr_client.create_text('lastwords2', state="published", slug="statistics", title="Interesting Statistics", body=body)
 
 # Iterate over each inmate in the dataframe and use .loc to select specific rows
 # https://towardsdatascience.com/how-to-use-loc-and-iloc-for-selecting-data-in-pandas-bd09cb4c3d79
@@ -217,7 +217,7 @@ if (len(df.loc[0:103])) <= 250:
         tags = f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"
         # Send the API call (the post will be queued) 
         print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
-        client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=tags) 
+        tumblr_client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=tags) 
 else:
     print("The number of posts is too high. No API call will be sent.")
 
@@ -240,6 +240,6 @@ if (len(df.loc[104:df.last_valid_index()])) == 300:
         tags = f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"
         # Send the API call (the post will be queued)  
         print(f"Queueing the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
-        client.create_quote('lastwords2', state="queue", quote=quote, source=source, tags=tags) 
+        tumblr_client.create_quote('lastwords2', state="queue", quote=quote, source=source, tags=tags) 
 else:
     print("The number of expected posts was NOT 300. No API call will be sent.")
