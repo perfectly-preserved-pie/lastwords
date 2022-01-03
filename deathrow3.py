@@ -96,14 +96,6 @@ df["Offender Information"] = df[
 print("Checking Offender Information URLs and rewriting if necessary...")
 df["Offender Information"] = df["Offender Information"].apply(check)
 
-offender_data = list(
-    zip(
-        df["First Name"],
-        df["Last Name"],
-        df["Last Statement URL"],
-    )
-)
-
 # Use bs4 to get the Last Statement URLs
 last_statement_urls = []
 soup = bs4(response.text, 'html.parser')
@@ -112,6 +104,14 @@ for link in soup.select('tr>td:nth-child(3)>a'):
     last_statement_urls.append(f"{base_url}/" + link['href'])
 # Add the URLs to the dataframe
 df["Last Statement URL"] = last_statement_urls
+
+offender_data = list(
+    zip(
+        df["First Name"],
+        df["Last Name"],
+        df["Last Statement URL"],
+    )
+)
 
 statements = []
 for item in offender_data:
