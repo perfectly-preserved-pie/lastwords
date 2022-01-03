@@ -8,6 +8,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from os import replace
 import random
+import beautifulsoup4 as bs4
 import time
 import pytumblr
 from imgurpython import ImgurClient
@@ -58,7 +59,7 @@ statement_xpath = '//*[@id="content_right"]/p[6]/text()'
 
 def clean(first_and_last_name: list) -> str:
     name = "".join(first_and_last_name).replace(" ", "").lower()
-    return name.replace(", Jr.", "").replace(", Sr.", "").replace("'", "")
+    return name.replace(", Jr.", "").replace(", Sr.", "").replace("'", "").replace(",iii", "")
 
 
 def get_last_statement(statement_url: str) -> str:
@@ -95,11 +96,6 @@ df["Offender Information"] = df[
 print("Checking Offender Information URLs and rewriting if necessary...")
 df["Offender Information"] = df["Offender Information"].apply(check)
 
-print("Cleaning up Last Statement URLs...")
-df["Last Statement URL"] = df[
-    ["Last Name", 'First Name']
-].apply(lambda x: f"{base_url}/dr_info/{clean(x)}last.html", axis=1)
-
 offender_data = list(
     zip(
         df["First Name"],
@@ -107,6 +103,15 @@ offender_data = list(
         df["Last Statement URL"],
     )
 )
+
+# Use bs4 to get the Last Statement URLs
+last_statement_urls = []
+soup = bs4(response.text, 'html.parser')
+# Select the correct <a href> tag based on third tag I guess
+for link in soup.select('tr>td:nth-child(3)>a'):
+    last_statement_urls.append(f"{base_url}/" + link['href'])
+# Add the URLs to the dataframe
+df["Last Statement URL"] = last_statement_urls
 
 statements = []
 for item in offender_data:
@@ -117,16 +122,15 @@ for item in offender_data:
 df["Last Statement"] = statements
 
 # Remove all inmates that don't have a last statement
-# We'll first create a list of keywords indicating no last statement to be rewritten as NaN
+# We'll first create a list of keywords indicating no last statement
 # https://stackoverflow.com/a/43399866
 keywords = ['This inmate declined to make a last statement.','No statement was made.','No statement given.','None','(Written statement)','Spoken: No','Spoken: No.','No','No last statement.','No, I have no final statement.']
+empty_statements = df[df['Last Statement'].isin(keywords)].Execution.count()
+# Drop all rows containing these "no last statement" keywords
 df = df[~df['Last Statement'].isin(keywords)]
 # Now we drop all rows containing NaN
-# First display the number of rows to remove
-empty_statements = df.isnull().sum().sum()
-print(f"Removing {empty_statements} rows with empty last statements...")
-# Now drop em
 # https://hackersandslackers.com/pandas-dataframe-drop/
+print(f"Removing {empty_statements} rows with empty last statements...")
 df.dropna(axis=0,how='any',subset=['Last Statement'],inplace=True)
 print(f"{len(df.index)} rows remain.")
 
