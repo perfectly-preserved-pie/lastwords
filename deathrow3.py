@@ -124,7 +124,7 @@ df["Last Statement"] = statements
 # Remove all inmates that don't have a last statement
 # We'll first create a list of keywords indicating no last statement
 # https://stackoverflow.com/a/43399866
-keywords = ['This inmate declined to make a last statement.','No statement was made.','No statement given.','None','(Written statement)','Spoken: No','Spoken: No.','No','No last statement.','No, I have no final statement.']
+keywords = ['This inmate declined to make a last statement.','No statement was made.','No statement given.','None','(Written statement)','Spoken: No','Spoken: No.','No','No last statement.','No, I have no final statement.', '']
 empty_statements = df[df['Last Statement'].isin(keywords)].Execution.count()
 # Drop all rows containing these "no last statement" keywords
 df = df[~df['Last Statement'].isin(keywords)]
