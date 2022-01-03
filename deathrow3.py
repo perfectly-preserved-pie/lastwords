@@ -130,8 +130,9 @@ empty_statements = df[df['Last Statement'].isin(keywords)].Execution.count()
 df = df[~df['Last Statement'].isin(keywords)]
 # Now we drop all rows containing NaN
 # https://hackersandslackers.com/pandas-dataframe-drop/
+nan_statements = df['Last Statement'].isnull().sum().sum()
 df.dropna(axis=0,how='any',subset=['Last Statement'],inplace=True)
-print(f"Removed {empty_statements} rows with no last statement...")
+print(f"Removed {empty_statements + nan_statements} rows with no last statement...")
 print(f"{len(df.index)} rows remain.")
 
 # Reindex the dataframe so the rows are sequential again
