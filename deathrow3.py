@@ -8,7 +8,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from os import replace
 import random
-import bs4 as bs4
+from bs4 import BeautifulSoup
 import time
 import pytumblr
 from imgurpython import ImgurClient
