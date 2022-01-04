@@ -176,8 +176,8 @@ racial_distribution_link = imgur_client.upload_from_path('/tmp/racial_distributi
 # Set up the body
 # https://www.techbeamers.com/python-multiline-string/
 body = f"""<ul> 
-    <li>{len(df.index)} total last statements.</li>
     <li>{empty_statements} inmates declined to give a last statement.</li>
+    <li>{len(df.index)} total last statements.</li>
     <li>Christianity: {jesus_statements} inmates mentioned Jesus Christ at least once in their last statement.</li>
     <li>Islam: {allah_statements} inmates mentioned Allah at least once in their last statement.</li>
     <li>Judaism: {yahweh_statements} inmates mentioned Yahweh at least once in their last statement.</li>
