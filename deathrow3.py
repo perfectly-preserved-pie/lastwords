@@ -105,6 +105,10 @@ for item in offender_data:
 
 df["Last Statement"] = statements
 
+# Set the dataframe index to be based on Execution number since that's what the website seems to use
+# https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.set_index.html
+df.set_index('Execution', inplace=True)
+
 # Remove all inmates that don't have a last statement
 # We'll first create a list of keywords indicating no last statement
 # https://stackoverflow.com/a/43399866
