@@ -168,7 +168,7 @@ age_plot = age_groups_count.plot(kind='bar', title='Age Distribution of Executed
 age_plot.bar_label(age_plot.containers[0], label_type='edge')
 # Save the plot as a PNG
 print("Saving the plotted age graph...")
-plt.savefig("/tmp/age_distribution.png")
+plt.savefig("/tmp/age_distribution.png", bbox_inches = 'tight')
 
 # Racial distribution
 race_count = df.groupby('Race')['Execution'].count()
@@ -176,7 +176,7 @@ race_plot = race_count.plot(kind='bar', title='Racial Distribution of Executed I
 race_plot.bar_label(race_plot.containers[0], label_type='edge')
 # Save the plot as a PNG
 print("Saving the plotted race graph...")
-plt.savefig("/tmp/racial_distribution.png")
+plt.savefig("/tmp/racial_distribution.png", bbox_inches = 'tight')
 
 print(f"{len(df.index)} total last statements.")
 print(f"{empty_statements} inmates declined to give a last statement.")
