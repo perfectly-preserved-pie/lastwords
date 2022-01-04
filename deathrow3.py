@@ -211,7 +211,7 @@ tumblr_client.create_text('goodbyewarden', state="published", slug="statistics",
 # https://scipy-lectures.org/packages/sympy.html#equation-solving
 x = Symbol('x')
 # Solve for x: how many posts do we need to immediately publish?
-posts_to_publish = solve(len(df.index)-300-x, x)[0]
+posts_to_publish = int(solve(len(df.index)-300-x, x)[0])
 # iterate over the posts_to_publish dataframe in batches of 100
 # https://stackoverflow.com/a/23926699
 worklist = df.loc[0:posts_to_publish]
