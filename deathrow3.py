@@ -185,7 +185,7 @@ body = f"""<ul>
     <li>The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.</li>
     <li>The average age at execution was {average_age} years old.</li>
 </ul><br></br><h1>Age Distribution of Executed Inmates</h1><img src="{age_distribution_link}" alt="Age Distribution of Executed Inmates, Texas 1982-2021"><br></br><h1>Racial Distribution of Executed Inmates</h1><img src="{racial_distribution_link}" alt="Racial Distribution of Executed Inmates, Texas 1982-2021">"""
-tumblr_client.create_text('goodbyewarden', state="published", slug="statistics", title="Interesting Statistics", body=body)
+tumblr_client.create_text('goodbyewarden', state="published", slug="statistics", title="Some Interesting Statistics", body=body)
 
 # Iterate over each inmate in the dataframe and use .loc to select specific rows
 # https://towardsdatascience.com/how-to-use-loc-and-iloc-for-selecting-data-in-pandas-bd09cb4c3d79
