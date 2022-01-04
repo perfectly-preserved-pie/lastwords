@@ -140,7 +140,6 @@ df.sort_values(by="Date", key=pd.to_datetime, ascending=True, inplace=True)
 df.to_csv("/mnt/c/Temp/offenders_data_utf8.csv", encoding="utf-8-sig")
 
 # Calculate some interesting statistics
-# https://moonbooks.org/Articles/How-to-find-a-minimum-value-in-a-pandas-dataframe-column-/
 # Create a function to find percentages
 # https://stackoverflow.com/a/5998010
 def percentage(part, whole):
@@ -148,7 +147,7 @@ def percentage(part, whole):
     return str(Percentage)
 print("Calculating statistics...")
 oldest_inmate = df.loc[df.Age.idxmax()] # use idxmax to find the index of the oldest age, then use loc to find that whole entry
-youngest_inmate = df.loc[df.Age.idxmin()]
+youngest_inmate = df.loc[df.Age.idxmin()] # https://moonbooks.org/Articles/How-to-find-a-minimum-value-in-a-pandas-dataframe-column-/
 average_age = int(df.Age.mean()) # https://stackoverflow.com/a/3398439
 jesus_statements = len(df[df['Last Statement'].str.contains("Jesus|Christ")]) # https://stackoverflow.com/a/31583241
 jesus_statements_percentage = f"{round(int(float(percentage(jesus_statements, len(df.index)))), 0)}" + "%" # Round to 0 decimal places. Also convert to float then int to prevent Str errors
