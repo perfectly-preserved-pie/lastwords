@@ -121,6 +121,12 @@ print(f"{len(df.index)} rows remain.")
 # Reindex the dataframe so the rows are sequential again
 df.reset_index(drop=True, inplace=True)
 
+# Re-sort the dataframe index
+# This is to prevent KeyErrors when slicing the dataframe via loc[x:y] (i.e, the worklist variable)
+# https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sort_index.html
+# https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#slicing-with-labels
+df.sort_index(axis=0,inplace=True)
+
 # Sort the df by oldest executions first
 # https://stackoverflow.com/a/67689015
 # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sort_values.html
