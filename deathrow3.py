@@ -244,7 +244,7 @@ for i in range(0, len(worklist), batchsize): # use len() per https://stackoverfl
 # i.e if the posts df index ends at 273, the queue df index should start at 274
 posts_to_queue = worklist.last_valid_index() + 1
 if (len(df.loc[posts_to_queue:df.last_valid_index()])) <= 300: # we're expecting <300 posts, so add an if check
-    for inmate in df.loc[104:df.last_valid_index()].itertuples():
+    for inmate in df.loc[posts_to_queue:df.last_valid_index()].itertuples():
         # Generate the last statement for each inmate
         quote = inmate[11]
         # Generate the rest of the "source" information
