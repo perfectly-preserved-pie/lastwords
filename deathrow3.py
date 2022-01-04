@@ -217,9 +217,9 @@ for i in range(0, len(worklist), batchsize): # use len() per https://stackoverfl
         # Send the API call (the post will be queued) 
         print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         tumblr_client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=tags) 
-        # Wait 24 hours until our post API limit resets
-        print("Sleeping for 24 hours...")    
-        time.sleep(86400)
+    # Wait 24 hours until our post API limit resets
+    print("Sleeping for 24 hours...")    
+    time.sleep(86400)
 
 # Queue the remaining posts
 # The queue dataframe should start at the end of the publish dataframe (plus one)
