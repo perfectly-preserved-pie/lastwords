@@ -18,6 +18,8 @@ from lxml import html
 # Suppress SSL verification warnings
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+from sympy.solvers import solve
+from sympy import Symbol
 
 # Tumblr API stuff
 # This needs to be done first manually: https://github.com/tumblr/pytumblr/blob/master/interactive_console.py
@@ -205,11 +207,22 @@ tumblr_client.create_text('lastwords2', state="published", slug="statistics", ti
 # Also, we're gonna hit Tumblr's API limits as it stands: 
 #    1. Can only post 250 posts/day to either the queue or published
 #    2. Can only have 300 posts in the queue at once.
-# We have 403 inmates in the df. Publishing 103 immediately brings the remainder down to 300. We can then queue the remaining 300
-# My shitty solution is to publish the first 103 oldest executions on day 1, then wait 24 hours, then queue the remaining 300
-# If there are 250 or less posts, we're good to use the API
-if (len(df.loc[0:103])) <= 250:
-    for inmate in df.loc[0:103].itertuples():
+# Algebra comes in handy here. My high school math teacher has finally been vindicated 15 years later 👏
+# It doesn't matter how many rows we have: we need to post x posts until we remain with 300 posts
+# The last 300 posts will be queued
+# Use SymPy to solve an algebraic equation
+# https://scipy-lectures.org/packages/sympy.html#equation-solving
+x = Symbol('x')
+# Solve for x: how many posts do we need to immediately publish?
+posts_to_publish = solve(len(df.index)-300-x, x)[0]
+# iterate over the posts_to_publish dataframe in batches of 100
+# https://stackoverflow.com/a/23926699
+worklist = df.loc[0:posts_to_publish]
+batchsize = 100
+for i in range(0, len(worklist), batchsize): # use len() per https://stackoverflow.com/a/60480663
+    batch = worklist[i:i+batchsize]
+    # do stuff with batch
+    for inmate in batch.itertuples():
         # Generate the last statement for each inmate
         quote = inmate[11]
         # Generate the rest of the "source" information
@@ -222,16 +235,15 @@ if (len(df.loc[0:103])) <= 250:
         # Send the API call (the post will be queued) 
         print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         tumblr_client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=tags) 
-else:
-    print("The number of posts is too high. No API call will be sent.")
+        # Wait 24 hours until our post API limit resets
+        print("Sleeping for 24 hours...")    
+        time.sleep(86400)
 
-# Wait 24 hours until our post API limit resets
-print("Sleeping for 24 hours...")    
-time.sleep(86400)
-
-# Queue the remaining 300 posts
-# we're expecting 300 posts, so add an if check
-if (len(df.loc[104:df.last_valid_index()])) == 300:
+# Queue the remaining posts
+# The queue dataframe should start at the end of the publish dataframe (plus one)
+# i.e if the posts df index ends at 273, the queue df index should start at 274
+posts_to_queue = worklist.last_valid_index() + 1
+if (len(df.loc[posts_to_queue:df.last_valid_index()])) <= 300: # we're expecting <300 posts, so add an if check
     for inmate in df.loc[104:df.last_valid_index()].itertuples():
         # Generate the last statement for each inmate
         quote = inmate[11]
@@ -246,4 +258,4 @@ if (len(df.loc[104:df.last_valid_index()])) == 300:
         print(f"Queueing the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         tumblr_client.create_quote('lastwords2', state="queue", quote=quote, source=source, tags=tags) 
 else:
-    print("The number of expected posts was NOT 300. No API call will be sent.")
+    print("The number of expected posts was NOT less than 300. No API call will be sent.")
