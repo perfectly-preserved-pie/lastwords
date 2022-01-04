@@ -51,7 +51,7 @@ imgur_client = ImgurClient(
 )
 
 # TDCJ stuff
-# this is a slightly modified version of the code I've shamelessly stolen from StackOverflow
+# this is a heavily bastardized version of some code I've shamelessly stolen from StackOverflow
 # https://stackoverflow.com/a/64873079
 # thank you, internet
 base_url = "https://www.tdcj.texas.gov/death_row"
