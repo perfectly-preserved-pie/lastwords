@@ -135,6 +135,7 @@ youngest_inmate = df.loc[df.Age.idxmin()]
 average_age = int(df.Age.mean()) # https://stackoverflow.com/a/3398439
 jesus_statements = len(df[df['Last Statement'].str.contains("Jesus|Christ")]) # https://stackoverflow.com/a/31583241
 allah_statements = len(df[df['Last Statement'].str.contains("Allah")])
+yahweh_statements = len(df[df['Last Statement'].str.contains("Yahweh|Yahwe|Yahve|Yahuwah")])
 # Age distribution
 # https://riptutorial.com/pandas/example/5965/grouping-numbers
 age_groups = pd.cut(df.Age, bins=[18, 20, 29, 39, 49, 59, 69, 79, 89], labels=['18 to 20 years old', '21 to 29 years old', '30 to 39 years old', '40 to 49 years old', '50 to 59 years old', '60 to 69 years old', '70 to 79 years old', '80 to 89 years old'])
@@ -159,8 +160,9 @@ plt.savefig("/tmp/racial_distribution.png")
 
 print(f"{len(df.index)} total last statements.")
 print(f"{empty_statements} inmates declined to give a last statement.")
-print(f"{jesus_statements} inmates mentioned Jesus Christ at least once in their last statement.")
-print(f"{allah_statements} inmates mentioned Allah at least once in their last statement.")
+print(f"Christianity: {jesus_statements} inmates mentioned Jesus Christ at least once in their last statement.")
+print(f"Islam: {allah_statements} inmates mentioned Allah at least once in their last statement.")
+print(f"Judaism {yahweh_statements} inmates mentioned Yahweh at least once in their last statement.")
 print(f"The oldest executed inmate was {oldest_inmate['First Name']} {oldest_inmate['Last Name']} at {oldest_inmate.Age} years old.")
 print(f"The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.")
 print(f"The average age at execution was {average_age} years old.")
@@ -176,8 +178,9 @@ racial_distribution_link = imgur_client.upload_from_path('/tmp/racial_distributi
 body = f"""<ul> 
     <li>{len(df.index)} total last statements.</li>
     <li>{empty_statements} inmates declined to give a last statement.</li>
-    <li>{jesus_statements} inmates mentioned Jesus Christ at least once in their last statement.</li>
-    <li>{allah_statements} inmates mentioned Allah at least once in their last statement.</li>
+    <li>Christianity: {jesus_statements} inmates mentioned Jesus Christ at least once in their last statement.</li>
+    <li>Islam: {allah_statements} inmates mentioned Allah at least once in their last statement.</li>
+    <li>Judaism: {yahweh_statements} inmates mentioned Yahweh at least once in their last statement.</li>
     <li>The oldest executed inmate was {oldest_inmate['First Name']} {oldest_inmate['Last Name']} at {oldest_inmate.Age} years old.</li>
     <li>The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.</li>
     <li>The average age at execution was {average_age} years old.</li>
