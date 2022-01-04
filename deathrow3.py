@@ -20,6 +20,7 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from sympy.solvers import solve
 from sympy import Symbol
+import csv
 
 # Tumblr API stuff
 # This needs to be done first manually: https://github.com/tumblr/pytumblr/blob/master/interactive_console.py
@@ -132,6 +133,11 @@ df.sort_index(axis=0,inplace=True)
 # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sort_values.html
 print("Sorting dataframe by oldest execution first...")
 df.sort_values(by="Date", key=pd.to_datetime, ascending=True, inplace=True)
+
+# Export the df to a CSV for debugging
+# Use utf-8-sig encoding
+# https://stackoverflow.com/a/43684587
+df.to_csv("/mnt/c/Temp/offenders_data_utf8.csv", encoding="utf-8-sig")
 
 # Calculate some interesting statistics
 # https://moonbooks.org/Articles/How-to-find-a-minimum-value-in-a-pandas-dataframe-column-/
