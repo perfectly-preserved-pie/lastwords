@@ -185,7 +185,7 @@ body = f"""<ul>
     <li>The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.</li>
     <li>The average age at execution was {average_age} years old.</li>
 </ul><br></br><h1>Age Distribution of Executed Inmates</h1><img src="{age_distribution_link}" alt="Age Distribution of Executed Inmates, Texas 1982-2021"><br></br><h1>Racial Distribution of Executed Inmates</h1><img src="{racial_distribution_link}" alt="Racial Distribution of Executed Inmates, Texas 1982-2021">"""
-tumblr_client.create_text('lastwords2', state="published", slug="statistics", title="Interesting Statistics", body=body)
+tumblr_client.create_text('their-last-words', state="published", slug="statistics", title="Interesting Statistics", body=body)
 
 # Iterate over each inmate in the dataframe and use .loc to select specific rows
 # https://towardsdatascience.com/how-to-use-loc-and-iloc-for-selecting-data-in-pandas-bd09cb4c3d79
@@ -219,7 +219,7 @@ for i in range(0, len(worklist), batchsize): # use len() per https://stackoverfl
         tags = f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"
         # Send the API call (the post will be queued) 
         print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
-        tumblr_client.create_quote('lastwords2', state="published", quote=quote, source=source, tags=tags) 
+        tumblr_client.create_quote('their-last-words', state="published", quote=quote, source=source, tags=tags) 
     # Wait 24 hours until our post API limit resets
     print("Sleeping for 24 hours...")    
     time.sleep(86400)
@@ -241,6 +241,6 @@ if (len(df.loc[posts_to_queue:df.last_valid_index()])) <= 300: # we're expecting
         tags = f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"
         # Send the API call (the post will be queued)  
         print(f"Queueing the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
-        tumblr_client.create_quote('lastwords2', state="queue", quote=quote, source=source, tags=tags) 
+        tumblr_client.create_quote('their-last-words', state="queue", quote=quote, source=source, tags=tags) 
 else:
     print("The number of expected posts was NOT less than 300. No API call will be sent.")
