@@ -141,13 +141,22 @@ df.to_csv("/mnt/c/Temp/offenders_data_utf8.csv", encoding="utf-8-sig")
 
 # Calculate some interesting statistics
 # https://moonbooks.org/Articles/How-to-find-a-minimum-value-in-a-pandas-dataframe-column-/
+# Create a function to find percentages
+# https://stackoverflow.com/a/5998010
+def percentage(part, whole):
+    Percentage = 100 * float(part)/float(whole)
+    return str(Percentage)
 print("Calculating statistics...")
 oldest_inmate = df.loc[df.Age.idxmax()] # use idxmax to find the index of the oldest age, then use loc to find that whole entry
 youngest_inmate = df.loc[df.Age.idxmin()]
 average_age = int(df.Age.mean()) # https://stackoverflow.com/a/3398439
 jesus_statements = len(df[df['Last Statement'].str.contains("Jesus|Christ")]) # https://stackoverflow.com/a/31583241
+jesus_statements_percentage = f"{round(int(float(percentage(jesus_statements, len(df.index)))), 0)}" + "%" # Round to 0 decimal places. Also convert to float then int to prevent Str errors
 allah_statements = len(df[df['Last Statement'].str.contains("Allah")])
+allah_statements_percentage = f"{round(int(float(percentage(allah_statements, len(df.index)))), 0)}" + "%"
 yahweh_statements = len(df[df['Last Statement'].str.contains("Yahweh|Yahwe|Yahve|Yahuwah")])
+yahweh_statements_percentage = f"{round(int(float(percentage(yahweh_statements, len(df.index)))), 0)}" + "%"
+
 # Age distribution
 # https://riptutorial.com/pandas/example/5965/grouping-numbers
 age_groups = pd.cut(df.Age, bins=[18, 20, 29, 39, 49, 59, 69, 79, 89], labels=['18 to 20 years old', '21 to 29 years old', '30 to 39 years old', '40 to 49 years old', '50 to 59 years old', '60 to 69 years old', '70 to 79 years old', '80 to 89 years old'])
@@ -172,9 +181,9 @@ plt.savefig("/tmp/racial_distribution.png")
 
 print(f"{len(df.index)} total last statements.")
 print(f"{empty_statements} inmates declined to give a last statement.")
-print(f"Christianity: {jesus_statements} inmates mentioned Jesus Christ at least once in their last statement.")
-print(f"Islam: {allah_statements} inmates mentioned Allah at least once in their last statement.")
-print(f"Judaism: {yahweh_statements} inmates mentioned Yahweh at least once in their last statement.")
+print(f"Christianity: {jesus_statements} inmates ({jesus_statements_percentage}) mentioned Jesus Christ at least once in their last statement.")
+print(f"Islam: {allah_statements} inmates ({allah_statements_percentage}) mentioned Allah at least once in their last statement.")
+print(f"Judaism: {yahweh_statements} inmates ({yahweh_statements_percentage}) mentioned Yahweh at least once in their last statement.")
 print(f"The oldest executed inmate was {oldest_inmate['First Name']} {oldest_inmate['Last Name']} at {oldest_inmate.Age} years old.")
 print(f"The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.")
 print(f"The average age at execution was {average_age} years old.")
@@ -190,9 +199,9 @@ racial_distribution_link = imgur_client.upload_from_path('/tmp/racial_distributi
 body = f"""<ul> 
     <li>{empty_statements} inmates declined to give a last statement.</li>
     <li>{len(df.index)} total last statements.</li>
-    <li>Christianity: {jesus_statements} inmates mentioned Jesus Christ at least once in their last statement.</li>
-    <li>Islam: {allah_statements} inmates mentioned Allah at least once in their last statement.</li>
-    <li>Judaism: {yahweh_statements} inmates mentioned Yahweh at least once in their last statement.</li>
+    <li>Christianity: {jesus_statements} inmates ({jesus_statements_percentage}) mentioned Jesus Christ at least once in their last statement.</li>
+    <li>Islam: {allah_statements} inmates ({allah_statements_percentage}) mentioned Allah at least once in their last statement.</li>
+    <li>Judaism: {yahweh_statements} inmates ({yahweh_statements_percentage}) mentioned Yahweh at least once in their last statement.</li>
     <li>The oldest executed inmate was {oldest_inmate['First Name']} {oldest_inmate['Last Name']} at {oldest_inmate.Age} years old.</li>
     <li>The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.</li>
     <li>The average age at execution was {average_age} years old.</li>
