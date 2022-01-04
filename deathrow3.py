@@ -176,8 +176,8 @@ print(f"The average age at execution was {average_age} years old.")
 # Create a post with the statistics and plots
 # Upload the PNGs to Imgur and get the resulting link
 print("Uploading graphs to Imgur...")
-age_distribution_link = imgur_client.upload_from_path('/tmp/age_distribution.png')['link']
-racial_distribution_link = imgur_client.upload_from_path('/tmp/racial_distribution.png')['link']
+age_distribution_link = imgur_client.upload_from_path('/tmp/age_distribution.png', anon=False)['link']
+racial_distribution_link = imgur_client.upload_from_path('/tmp/racial_distribution.png', anon=False)['link']
 
 # Set up the body
 # https://www.techbeamers.com/python-multiline-string/
