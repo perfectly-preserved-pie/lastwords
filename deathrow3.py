@@ -58,49 +58,31 @@ base_url = "https://www.tdcj.texas.gov/death_row"
 response = requests.get(f"{base_url}/dr_executed_offenders.html", verify=False)
 statement_xpath = '//*[@id="content_right"]/p[6]/text()'
 
-
-def clean(first_and_last_name: list) -> str:
-    name = "".join(first_and_last_name).replace(" ", "").lower()
-    return name.replace(", Jr.", "").replace(", Sr.", "").replace("'", "").replace(",iii", "")
-
-
 def get_last_statement(statement_url: str) -> str:
     page = requests.get(statement_url, verify=False).text
     statement = html.fromstring(page).xpath(statement_xpath)
     text = next(iter(statement), "")
     return " ".join(text.split())
 
-# Create a function to test if the offender statement is an HTML page or JPG image 
-# Because some offenders' information is uploaded as a JPG scan and not an HTML page
-# if we get a 404, we can assume the URL needs to be rewritten to end in .jpg instead of .html
-def check(url):
-    header = requests.head(url, verify=False)
-    if header.status_code == 404:
-        url = url.replace(".html", ".jpg")
-        return f"{url}"
-    elif header.status_code == 200: # return the unmodified URL if the test was successful
-        return f"{url}"
-
 df = pd.read_html(response.content, flavor="bs4")
 df = pd.concat(df)
+soup = bs4(response.text, 'html.parser')
 
 df.rename(
     columns={'Link': "Offender Information", "Link.1": "Last Statement URL"},
     inplace=True,
 )
 
-df["Offender Information"] = df[
-    ["Last Name", 'First Name']
-].apply(lambda x: f"{base_url}/dr_info/{clean(x)}.html", axis=1)
-
-# Apply our previously created function to the Pandas column to rewrite the URL to .jpg if needed
-# https://stackoverflow.com/a/54145945
-print("Checking Offender Information URLs and rewriting if necessary...")
-df["Offender Information"] = df["Offender Information"].apply(check)
+# Use bs4 to get the Offender Information URLs
+offender_information_urls = []
+# Select the correct <a href> tag based on second tag I guess
+for link in soup.select('tr>td:nth-child(2)>a'):
+    offender_information_urls.append(f"{base_url}/" + link['href'])
+# Add the URLs to the dataframe
+df["Offender Information"] = offender_information_urls
 
 # Use bs4 to get the Last Statement URLs
 last_statement_urls = []
-soup = bs4(response.text, 'html.parser')
 # Select the correct <a href> tag based on third tag I guess
 for link in soup.select('tr>td:nth-child(3)>a'):
     last_statement_urls.append(f"{base_url}/" + link['href'])
