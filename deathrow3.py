@@ -236,7 +236,7 @@ for i in range(0, len(worklist), batchsize): # use len() per https://stackoverfl
         # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
         source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
         # Generate the tags 
-        tags = f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"
+        tags = [f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"]
         # Send the API call (the post will be queued) 
         print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         tumblr_client.create_quote('goodbyewarden', state="published", quote=quote, source=source, tags=tags) 
@@ -258,7 +258,7 @@ if (len(df.loc[posts_to_queue:df.last_valid_index()])) <= 300: # we're expecting
         # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
         source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
         # Generate the tags 
-        tags = f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"
+        tags = [f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"]
         # Send the API call (the post will be queued)  
         print(f"Queueing the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         tumblr_client.create_quote('goodbyewarden', state="queue", quote=quote, source=source, tags=tags) 
