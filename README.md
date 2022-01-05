@@ -1,7 +1,7 @@
 
 # Last Words
 
-A Python script that posts the last words of each inmate on Texas's death row right before they were executed to my website, https://lastwords.fyi. Links to the full offender information & original last statement are included with each post.
+A Python script that posts the last words of each inmate on [Texas's death row](https://www.tdcj.texas.gov/death_row/dr_executed_offenders.html) right before they were executed to my website, https://lastwords.fyi. Links to the full offender information & original last statement are included with each post.
 
 
 ## Acknowledgements
