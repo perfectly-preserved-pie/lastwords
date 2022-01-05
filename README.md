@@ -18,15 +18,6 @@ A Python script that posts the last words of each inmate on [Texas's death row](
 - Runs basic statistics on the above information, including generating plots
 - Removes any inmates with no last statement
 - Posts as many statements as possible to https://lastwords.fyi  without hitting the Tumblr API limits and queues the rest
-
-
-## Installation
-
-Simply download lastwords.py and run it with Python 3. 
-
-```bash
-  python3 lastwords.py
-```
     
 ## Lessons Learned
 
