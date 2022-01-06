@@ -15,6 +15,7 @@ from imgurpython import ImgurClient
 import pandas as pd
 import requests
 from lxml import html
+import lxml
 # Suppress SSL verification warnings
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -57,13 +58,22 @@ imgur_client = ImgurClient(
 # thank you, internet
 base_url = "https://www.tdcj.texas.gov/death_row"
 response = requests.get(f"{base_url}/dr_executed_offenders.html", verify=False)
-statement_xpath = '//*[@id="content_right"]/p[6]/text()'
 
+# Create a function to get the last statement text
 def get_last_statement(statement_url: str) -> str:
-    page = requests.get(statement_url, verify=False).text
-    statement = html.fromstring(page).xpath(statement_xpath)
-    text = next(iter(statement), "")
-    return " ".join(text.split())
+    # Use lxml and XPath to grab all the <p> values after the "Last Statement:" line
+    # https://stackoverflow.com/a/11466033
+    response = requests.get(statement_url, stream=True, verify=False)
+    response.raw.decode_content = True
+    tree = lxml.html.parse(response.raw)
+    xpath_elements = tree.xpath("//p[text()='Last Statement:']/following-sibling::p")
+    # Create a list with the .text of each element in xpath_elements
+    statement = []
+    for element in xpath_elements:
+        statement.append(element.text)
+    # Join each element into a string
+    # https://stackoverflow.com/a/12453584
+    return ' '.join(statement)
 
 df = pd.read_html(response.content, flavor="bs4")
 df = pd.concat(df)
