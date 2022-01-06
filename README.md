@@ -8,6 +8,7 @@ A Python script that posts the last words of each inmate on [Texas's death row](
 
  - StackOverflow
  - [/r/learnpython](https://www.reddit.com/r/learnpython)
+ - [The kind souls over in the #scripting and #python channels in the MacAdmins Slack](https://www.macadmins.org/)
  - [How to write a Good readme](https://bulldogjob.com/news/449-how-to-write-a-good-readme-for-your-github-project)
  - [The easiest way to create a README](https://readme.so/)
 
