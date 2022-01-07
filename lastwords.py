@@ -70,7 +70,7 @@ def get_last_statement(statement_url: str) -> str:
     # Create a list with the .text of each element in xpath_elements
     statement = []
     for element in xpath_elements:
-        statement.append(element.text)
+        statement.append(' '.join(element.text.split()))
     # Join each element into a string
     # https://stackoverflow.com/a/12453584
     return ' '.join(statement)
