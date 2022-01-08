@@ -287,7 +287,7 @@ for inmate in df_posts_to_publish_sections[2]: # the iterate over the third batc
     print("Sleeping for 24 hours...")    
     time.sleep(86400)
     
-for inmate in df_posts_to_publish_sections[2]: # the iterate over the third batch
+for inmate in df_posts_to_publish_sections[3]: # the iterate over the third batch
     # Generate the last statement for each inmate
     quote = inmate[11]
     # Generate the rest of the "source" information
