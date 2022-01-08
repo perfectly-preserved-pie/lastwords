@@ -314,7 +314,7 @@ try:
         print("Sleeping for 24 hours...")    
         time.sleep(86400)
 except IndexError:
-    gotdata2 = 'null'
+    gotdata3 = 'null'
     
 try:
     gotdata4 = df_posts_to_publish_sections[4]  
