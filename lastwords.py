@@ -152,74 +152,6 @@ df.sort_values(by="Date", key=pd.to_datetime, ascending=True, inplace=True)
 # https://stackoverflow.com/a/43684587
 df.to_csv("/mnt/c/Temp/offenders_data_utf8.csv", encoding="utf-8-sig")
 
-# Calculate some interesting statistics
-# Create a function to find percentages
-# https://stackoverflow.com/a/5998010
-def percentage(part, whole):
-    Percentage = 100 * float(part)/float(whole)
-    return str(Percentage)
-print("Calculating statistics...")
-oldest_inmate = df.loc[df.Age.idxmax()] # use idxmax to find the index of the oldest age, then use loc to find that whole entry
-youngest_inmate = df.loc[df.Age.idxmin()] # https://moonbooks.org/Articles/How-to-find-a-minimum-value-in-a-pandas-dataframe-column-/
-average_age = int(df.Age.mean()) # https://stackoverflow.com/a/3398439
-jesus_statements = len(df[df['Last Statement'].str.contains("Jesus|Christ")]) # https://stackoverflow.com/a/31583241
-jesus_statements_percentage = f"{round(int(float(percentage(jesus_statements, len(df.index)))), 0)}" + "%" # Round to 0 decimal places. Also convert to float then int to prevent Str errors
-allah_statements = len(df[df['Last Statement'].str.contains("Allah")])
-allah_statements_percentage = f"{round(int(float(percentage(allah_statements, len(df.index)))), 0)}" + "%"
-yahweh_statements = len(df[df['Last Statement'].str.contains("Yahweh|Yahwe|Yahve|Yahuwah")])
-yahweh_statements_percentage = f"{round(int(float(percentage(yahweh_statements, len(df.index)))), 0)}" + "%"
-
-# Age distribution
-# https://riptutorial.com/pandas/example/5965/grouping-numbers
-age_groups = pd.cut(df.Age, bins=[18, 20, 29, 39, 49, 59, 69, 79, 89], labels=['18 to 20 years old', '21 to 29 years old', '30 to 39 years old', '40 to 49 years old', '50 to 59 years old', '60 to 69 years old', '70 to 79 years old', '80 to 89 years old'])
-# Plot the groups
-# https://stackoverflow.com/a/40314011
-age_groups_count = df.groupby(age_groups)['Age'].count()
-age_plot = age_groups_count.plot(kind='bar', title='Age Distribution of Executed Inmates in Texas, 1982-2021', ylabel='Number of Inmates', xlabel='Age Group')
-# Annotate the bars
-# https://stackoverflow.com/a/67561982
-age_plot.bar_label(age_plot.containers[0], label_type='edge')
-# Save the plot as a PNG
-print("Saving the plotted age graph...")
-plt.savefig("/tmp/age_distribution.png", bbox_inches = 'tight')
-
-# Racial distribution
-race_count = df.groupby('Race')['Execution'].count()
-race_plot = race_count.plot(kind='bar', title='Racial Distribution of Executed Inmates in Texas, 1982-2021', ylabel='Number of Inmates', xlabel='Race')
-race_plot.bar_label(race_plot.containers[0], label_type='edge')
-# Save the plot as a PNG
-print("Saving the plotted race graph...")
-plt.savefig("/tmp/racial_distribution.png", bbox_inches = 'tight')
-
-print(f"{len(df.index)} total last statements.")
-print(f"{empty_statements} inmates declined to give a last statement.")
-print(f"Christianity: {jesus_statements} inmates ({jesus_statements_percentage}) mentioned Jesus Christ at least once in their last statement.")
-print(f"Islam: {allah_statements} inmates ({allah_statements_percentage}) mentioned Allah at least once in their last statement.")
-print(f"Judaism: {yahweh_statements} inmates ({yahweh_statements_percentage}) mentioned Yahweh at least once in their last statement.")
-print(f"The oldest executed inmate was {oldest_inmate['First Name']} {oldest_inmate['Last Name']} at {oldest_inmate.Age} years old.")
-print(f"The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.")
-print(f"The average age at execution was {average_age} years old.")
-
-# Create a post with the statistics and plots
-# Upload the PNGs to Imgur and get the resulting link
-print("Uploading graphs to Imgur...")
-age_distribution_link = imgur_client.upload_from_path('/tmp/age_distribution.png', anon=False)['link']
-racial_distribution_link = imgur_client.upload_from_path('/tmp/racial_distribution.png', anon=False)['link']
-
-# Set up the body
-# https://www.techbeamers.com/python-multiline-string/
-body = f"""<ul> 
-    <li>{empty_statements} inmates declined to give a last statement.</li>
-    <li>{len(df.index)} total last statements.</li>
-    <li>Christianity: {jesus_statements} inmates ({jesus_statements_percentage}) mentioned Jesus Christ at least once in their last statement.</li>
-    <li>Islam: {allah_statements} inmates ({allah_statements_percentage}) mentioned Allah at least once in their last statement.</li>
-    <li>Judaism: {yahweh_statements} inmates ({yahweh_statements_percentage}) mentioned Yahweh at least once in their last statement.</li>
-    <li>The oldest executed inmate was {oldest_inmate['First Name']} {oldest_inmate['Last Name']} at {oldest_inmate.Age} years old.</li>
-    <li>The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.</li>
-    <li>The average age at execution was {average_age} years old.</li>
-</ul><br></br><h1>Age Distribution of Executed Inmates</h1><img src="{age_distribution_link}" alt="Age Distribution of Executed Inmates, Texas 1982-2021"><br></br><h1>Racial Distribution of Executed Inmates</h1><img src="{racial_distribution_link}" alt="Racial Distribution of Executed Inmates, Texas 1982-2021">"""
-tumblr_client.create_text('goodbyewarden', state="published", slug="statistics", title="Some Interesting Statistics", body=body)
-
 # Iterate over each inmate in the dataframe and use .loc to select specific rows
 # https://towardsdatascience.com/how-to-use-loc-and-iloc-for-selecting-data-in-pandas-bd09cb4c3d79
 # Also, we're gonna hit Tumblr's API limits as it stands: 
@@ -379,3 +311,71 @@ if (len(df.loc[posts_to_queue:df.last_valid_index()])) <= 300: # we're expecting
         tumblr_client.create_quote('goodbyewarden', state="queue", quote=quote, source=source, tags=tags) 
 else:
     print("The number of expected posts was NOT less than 300. No API call will be sent.")
+    
+# Calculate some interesting statistics
+# Create a function to find percentages
+# https://stackoverflow.com/a/5998010
+def percentage(part, whole):
+    Percentage = 100 * float(part)/float(whole)
+    return str(Percentage)
+print("Calculating statistics...")
+oldest_inmate = df.loc[df.Age.idxmax()] # use idxmax to find the index of the oldest age, then use loc to find that whole entry
+youngest_inmate = df.loc[df.Age.idxmin()] # https://moonbooks.org/Articles/How-to-find-a-minimum-value-in-a-pandas-dataframe-column-/
+average_age = int(df.Age.mean()) # https://stackoverflow.com/a/3398439
+jesus_statements = len(df[df['Last Statement'].str.contains("Jesus|Christ")]) # https://stackoverflow.com/a/31583241
+jesus_statements_percentage = f"{round(int(float(percentage(jesus_statements, len(df.index)))), 0)}" + "%" # Round to 0 decimal places. Also convert to float then int to prevent Str errors
+allah_statements = len(df[df['Last Statement'].str.contains("Allah")])
+allah_statements_percentage = f"{round(int(float(percentage(allah_statements, len(df.index)))), 0)}" + "%"
+yahweh_statements = len(df[df['Last Statement'].str.contains("Yahweh|Yahwe|Yahve|Yahuwah")])
+yahweh_statements_percentage = f"{round(int(float(percentage(yahweh_statements, len(df.index)))), 0)}" + "%"
+
+# Age distribution
+# https://riptutorial.com/pandas/example/5965/grouping-numbers
+age_groups = pd.cut(df.Age, bins=[18, 20, 29, 39, 49, 59, 69, 79, 89], labels=['18 to 20 years old', '21 to 29 years old', '30 to 39 years old', '40 to 49 years old', '50 to 59 years old', '60 to 69 years old', '70 to 79 years old', '80 to 89 years old'])
+# Plot the groups
+# https://stackoverflow.com/a/40314011
+age_groups_count = df.groupby(age_groups)['Age'].count()
+age_plot = age_groups_count.plot(kind='bar', title='Age Distribution of Executed Inmates in Texas, 1982-2021', ylabel='Number of Inmates', xlabel='Age Group')
+# Annotate the bars
+# https://stackoverflow.com/a/67561982
+age_plot.bar_label(age_plot.containers[0], label_type='edge')
+# Save the plot as a PNG
+print("Saving the plotted age graph...")
+plt.savefig("/tmp/age_distribution.png", bbox_inches = 'tight')
+
+# Racial distribution
+race_count = df.groupby('Race')['Execution'].count()
+race_plot = race_count.plot(kind='bar', title='Racial Distribution of Executed Inmates in Texas, 1982-2021', ylabel='Number of Inmates', xlabel='Race')
+race_plot.bar_label(race_plot.containers[0], label_type='edge')
+# Save the plot as a PNG
+print("Saving the plotted race graph...")
+plt.savefig("/tmp/racial_distribution.png", bbox_inches = 'tight')
+
+print(f"{len(df.index)} total last statements.")
+print(f"{empty_statements} inmates declined to give a last statement.")
+print(f"Christianity: {jesus_statements} inmates ({jesus_statements_percentage}) mentioned Jesus Christ at least once in their last statement.")
+print(f"Islam: {allah_statements} inmates ({allah_statements_percentage}) mentioned Allah at least once in their last statement.")
+print(f"Judaism: {yahweh_statements} inmates ({yahweh_statements_percentage}) mentioned Yahweh at least once in their last statement.")
+print(f"The oldest executed inmate was {oldest_inmate['First Name']} {oldest_inmate['Last Name']} at {oldest_inmate.Age} years old.")
+print(f"The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.")
+print(f"The average age at execution was {average_age} years old.")
+
+# Create a post with the statistics and plots
+# Upload the PNGs to Imgur and get the resulting link
+print("Uploading graphs to Imgur...")
+age_distribution_link = imgur_client.upload_from_path('/tmp/age_distribution.png', anon=False)['link']
+racial_distribution_link = imgur_client.upload_from_path('/tmp/racial_distribution.png', anon=False)['link']
+
+# Set up the body
+# https://www.techbeamers.com/python-multiline-string/
+body = f"""<ul> 
+    <li>{empty_statements} inmates declined to give a last statement.</li>
+    <li>{len(df.index)} total last statements.</li>
+    <li>Christianity: {jesus_statements} inmates ({jesus_statements_percentage}) mentioned Jesus Christ at least once in their last statement.</li>
+    <li>Islam: {allah_statements} inmates ({allah_statements_percentage}) mentioned Allah at least once in their last statement.</li>
+    <li>Judaism: {yahweh_statements} inmates ({yahweh_statements_percentage}) mentioned Yahweh at least once in their last statement.</li>
+    <li>The oldest executed inmate was {oldest_inmate['First Name']} {oldest_inmate['Last Name']} at {oldest_inmate.Age} years old.</li>
+    <li>The youngest executed inmate was {youngest_inmate['First Name']} {youngest_inmate['Last Name']} at {youngest_inmate.Age} years old.</li>
+    <li>The average age at execution was {average_age} years old.</li>
+</ul><br></br><h1>Age Distribution of Executed Inmates</h1><img src="{age_distribution_link}" alt="Age Distribution of Executed Inmates, Texas 1982-2021"><br></br><h1>Racial Distribution of Executed Inmates</h1><img src="{racial_distribution_link}" alt="Racial Distribution of Executed Inmates, Texas 1982-2021">"""
+tumblr_client.create_text('goodbyewarden', state="published", slug="statistics", title="Some Interesting Statistics", body=body)
