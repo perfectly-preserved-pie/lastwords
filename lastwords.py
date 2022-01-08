@@ -71,8 +71,9 @@ def get_last_statement(statement_url: str) -> str:
     # Create a list with the .text of each element in xpath_elements
     statement = []
     for element in xpath_elements:
-        # https://stackoverflow.com/a/2077944
-        statement.append(' '.join(element.text.split()))
+        if element.text is not None: # Make sure that the only elements we get actually have values and aren't blank. https://www.delftstack.com/howto/python/check-if-variable-is-none-python/
+            # https://stackoverflow.com/a/2077944
+            statement.append(' '.join(element.text.split()))
     # Join each element into a string
     # https://stackoverflow.com/a/12453584
     return ' '.join(statement)
