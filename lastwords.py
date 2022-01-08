@@ -252,57 +252,60 @@ for inmate in df_posts_to_publish_sections[0]: # the iterate over the first batc
     # Wait 24 hours after each batch
     print("Sleeping for 24 hours...")    
     time.sleep(86400)
+
+if (df_posts_to_publish_sections[1]):    
+    for inmate in df_posts_to_publish_sections[1]: # the iterate over the second batch
+        # Generate the last statement for each inmate
+        quote = inmate[11]
+        # Generate the rest of the "source" information
+        # use an f-string to assign output to the 'source' variable
+        # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
+        # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
+        source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
+        # Generate the tags 
+        tags = [f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"]
+        # Send the API call (the post will be queued) 
+        print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
+        tumblr_client.create_quote('goodbyewarden', state="published", quote=quote, source=source, tags=tags) 
+        # Wait 24 hours after each batch
+        print("Sleeping for 24 hours...")    
+        time.sleep(86400)
     
-for inmate in df_posts_to_publish_sections[1]: # the iterate over the second batch
-    # Generate the last statement for each inmate
-    quote = inmate[11]
-    # Generate the rest of the "source" information
-    # use an f-string to assign output to the 'source' variable
-    # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
-    # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
-    source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
-    # Generate the tags 
-    tags = [f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"]
-    # Send the API call (the post will be queued) 
-    print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
-    tumblr_client.create_quote('goodbyewarden', state="published", quote=quote, source=source, tags=tags) 
-    # Wait 24 hours after each batch
-    print("Sleeping for 24 hours...")    
-    time.sleep(86400)
-    
-for inmate in df_posts_to_publish_sections[2]: # the iterate over the third batch
-    # Generate the last statement for each inmate
-    quote = inmate[11]
-    # Generate the rest of the "source" information
-    # use an f-string to assign output to the 'source' variable
-    # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
-    # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
-    source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
-    # Generate the tags 
-    tags = [f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"]
-    # Send the API call (the post will be queued) 
-    print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
-    tumblr_client.create_quote('goodbyewarden', state="published", quote=quote, source=source, tags=tags) 
-    # Wait 24 hours after each batch
-    print("Sleeping for 24 hours...")    
-    time.sleep(86400)
-    
-for inmate in df_posts_to_publish_sections[3]: # the iterate over the third batch
-    # Generate the last statement for each inmate
-    quote = inmate[11]
-    # Generate the rest of the "source" information
-    # use an f-string to assign output to the 'source' variable
-    # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
-    # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
-    source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
-    # Generate the tags 
-    tags = [f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"]
-    # Send the API call (the post will be queued) 
-    print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
-    tumblr_client.create_quote('goodbyewarden', state="published", quote=quote, source=source, tags=tags) 
-    # Wait 24 hours after each batch
-    print("Sleeping for 24 hours...")    
-    time.sleep(86400)
+if (df_posts_to_publish_sections[2]):   
+    for inmate in df_posts_to_publish_sections[2]: # the iterate over the third batch
+        # Generate the last statement for each inmate
+        quote = inmate[11]
+        # Generate the rest of the "source" information
+        # use an f-string to assign output to the 'source' variable
+        # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
+        # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
+        source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
+        # Generate the tags 
+        tags = [f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"]
+        # Send the API call (the post will be queued) 
+        print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
+        tumblr_client.create_quote('goodbyewarden', state="published", quote=quote, source=source, tags=tags) 
+        # Wait 24 hours after each batch
+        print("Sleeping for 24 hours...")    
+        time.sleep(86400)
+
+if (df_posts_to_publish_sections[3]):   
+    for inmate in df_posts_to_publish_sections[3]: # the iterate over the third batch
+        # Generate the last statement for each inmate
+        quote = inmate[11]
+        # Generate the rest of the "source" information
+        # use an f-string to assign output to the 'source' variable
+        # https://www.reddit.com/r/learnpython/comments/pxtzov/how_to_assign_an_output_a_variable/hepor21/
+        # (For Tumblr) HTML formatting guidelines: https://github.com/tumblr/pytumblr#creating-a-quote-post
+        source = f"{inmate[5]} {inmate[4]}. {inmate.Age} years old. Executed {inmate.Date}. <br></br> <small> <a href='{inmate[2]}'>Offender Information</a> <br></br> <a href='{inmate[3]}'>Last Statement</a> </small>"
+        # Generate the tags 
+        tags = [f"{inmate[5]} {inmate[4]}, Execution #{inmate.Execution}, Index {inmate.Index}"]
+        # Send the API call (the post will be queued) 
+        print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
+        tumblr_client.create_quote('goodbyewarden', state="published", quote=quote, source=source, tags=tags) 
+        # Wait 24 hours after each batch
+        print("Sleeping for 24 hours...")    
+        time.sleep(86400)
 
 # Queue the remaining posts
 # The queue dataframe should start at the end of the "publish immediately" dataframe (plus one)
