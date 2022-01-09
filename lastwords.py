@@ -60,23 +60,20 @@ imgur_client = ImgurClient(
 base_url = "https://www.tdcj.texas.gov/death_row"
 response = requests.get(f"{base_url}/dr_executed_offenders.html", verify=False)
 
-# Create a function to get the last statement text
+# Create a function to get the last statement text using BeautifulSoup
 def get_last_statement(statement_url: str) -> str:
-    # Use lxml and XPath to grab all the <p> values after the "Last Statement:" line
-    # https://stackoverflow.com/a/11466033
-    response = requests.get(statement_url, stream=True, verify=False)
-    response.raw.decode_content = True
-    tree = lxml.html.parse(response.raw)
-    xpath_elements = tree.xpath("//p[text()='Last Statement:']/following-sibling::p")
-    # Create a list with the .text of each element in xpath_elements
-    statement = []
-    for element in xpath_elements:
-        if element.text is not None: # Make sure that the only elements we get actually have values and aren't blank. https://www.delftstack.com/howto/python/check-if-variable-is-none-python/
-            # https://stackoverflow.com/a/2077944
-            statement.append(' '.join(element.text.split()))
-    # Join each element into a string
+	response = requests.get(statement_url, stream=True, verify=False)
+	soup = bs4(response.text, 'html.parser')
+	# Find all <p> tags starting at the 5th <p> and ending at some high number (in case of additional paragraphs)
+	statement_paragraphs = soup.findAll('p')[5:15]
+	statement = []
+	# Iterate over the list and get only the text (strip the HTML tags) then append it to statement
+	for p in statement_paragraphs:
+		# https://stackoverflow.com/a/2077944
+		statement.append(' '.join(p.get_text().split()))
+	# Join each element into a string
     # https://stackoverflow.com/a/12453584
-    return ' '.join(statement)
+	return ' '.join(statement)
 
 df = pd.read_html(response.content, flavor="bs4")
 df = pd.concat(df)
