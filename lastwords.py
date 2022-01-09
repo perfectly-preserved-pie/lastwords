@@ -151,20 +151,24 @@ df.to_csv("/mnt/c/Temp/offenders_data_utf8.csv", encoding="utf-8-sig")
 
 # Calculate some interesting statistics
 # Create a function to find percentages
-# https://stackoverflow.com/a/5998010
-def percentage(part, whole):
-    Percentage = 100 * float(part)/float(whole)
-    return str(Percentage)
+# https://www.skillsugar.com/how-to-calculate-a-percentage-in-python
+def percentage(first, second, integer = False):
+    percent = first / second * 100
+    if integer:
+        return int(percent)
+    return percent
+print(percentage(3, 9))
+
 print("Calculating statistics...")
 oldest_inmate = df.loc[df.Age.idxmax()] # use idxmax to find the index of the oldest age, then use loc to find that whole entry
 youngest_inmate = df.loc[df.Age.idxmin()] # https://moonbooks.org/Articles/How-to-find-a-minimum-value-in-a-pandas-dataframe-column-/
 average_age = int(df.Age.mean()) # https://stackoverflow.com/a/3398439
 jesus_statements = len(df[df['Last Statement'].str.contains("Jesus|Christ")]) # https://stackoverflow.com/a/31583241
-jesus_statements_percentage = f"{round(int(float(percentage(jesus_statements, len(df.index)))), 0)}" + "%" # Round to 0 decimal places. Also convert to float then int to prevent Str errors
+jesus_statements_percentage = f"{round(int(float(percentage(jesus_statements, len(df.index)))), 1)}" + "%" # Round to 0 decimal places. Also convert to float then int to prevent Str errors
 allah_statements = len(df[df['Last Statement'].str.contains("Allah")])
-allah_statements_percentage = f"{round(int(float(percentage(allah_statements, len(df.index)))), 0)}" + "%"
+allah_statements_percentage = f"{round(int(float(percentage(allah_statements, len(df.index)))), 1)}" + "%"
 yahweh_statements = len(df[df['Last Statement'].str.contains("Yahweh|Yahwe|Yahve|Yahuwah")])
-yahweh_statements_percentage = f"{round(int(float(percentage(yahweh_statements, len(df.index)))), 0)}" + "%"
+yahweh_statements_percentage = f"{round(int(float(percentage(yahweh_statements, len(df.index)))), 1)}" + "%"
 
 # Age distribution
 # https://riptutorial.com/pandas/example/5965/grouping-numbers
