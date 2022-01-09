@@ -163,7 +163,7 @@ x = Symbol('x')
 # Solve for x: how many posts do we need to immediately publish?
 posts_to_publish = int(solve(len(df.index)-300-x, x)[0])
 # Now we have the dataframe we need to publish immediately
-df_posts_to_publish = df.loc[df.first_valid_index():posts_to_publish]
+df_posts_to_publish = df.loc[df.first_valid_index():(df.first_valid_index() - posts_to_publish)]
 # Use Numpy to split the dataframe into sections of roughly 100
 df_posts_to_publish_sections = np.array_split(df_posts_to_publish, (len(df_posts_to_publish) / 100), axis=0)
 for inmate in df_posts_to_publish_sections[0]: # the iterate over the first batch
@@ -291,7 +291,7 @@ except IndexError:
 # Queue the remaining posts
 # The queue dataframe should start at the end of the "publish immediately" dataframe (plus one)
 # i.e if the "publish immediately" df index has 273 items total, the queue df index should start at 274
-posts_to_queue = df_posts_to_publish.last_valid_index() + 1
+posts_to_queue = df_posts_to_publish.last_valid_index() - 1
 if (len(df.loc[posts_to_queue:df.last_valid_index()])) <= 300: # we're expecting <300 posts, so add an if check
     for inmate in df.loc[posts_to_queue:df.last_valid_index()].itertuples():
         # Generate the last statement for each inmate
