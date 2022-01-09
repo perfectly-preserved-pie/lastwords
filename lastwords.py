@@ -163,7 +163,7 @@ x = Symbol('x')
 # Solve for x: how many posts do we need to immediately publish?
 posts_to_publish = int(solve(len(df.index)-300-x, x)[0])
 # Now we have the dataframe we need to publish immediately
-df_posts_to_publish = df.loc[0:posts_to_publish]
+df_posts_to_publish = df.loc[df.first_valid_index:posts_to_publish]
 # Use Numpy to split the dataframe into sections of roughly 100
 df_posts_to_publish_sections = np.array_split(df_posts_to_publish, (len(df_posts_to_publish) / 100), axis=0)
 for inmate in df_posts_to_publish_sections[0]: # the iterate over the first batch
