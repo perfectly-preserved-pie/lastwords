@@ -157,7 +157,6 @@ def percentage(first, second, integer = False):
     if integer:
         return int(percent)
     return percent
-print(percentage(3, 9))
 
 print("Calculating statistics...")
 oldest_inmate = df.loc[df.Age.idxmax()] # use idxmax to find the index of the oldest age, then use loc to find that whole entry
