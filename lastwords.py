@@ -289,7 +289,6 @@ except IndexError:
     gotdata5 = 'null' 
 
 # Queue the remaining posts
-# The queue dataframe should start  (plus one)
 # Because the dataframe's index is reversed, the queue should start at the end of the "publish immediately" dataframe MINUS one
 # i.e if the post df ended at 277, the queue df should start at 276 and then continue to 0 (the last valid index)
 posts_to_queue = df_posts_to_publish.last_valid_index() - 1
