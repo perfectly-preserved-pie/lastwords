@@ -289,8 +289,9 @@ except IndexError:
     gotdata5 = 'null' 
 
 # Queue the remaining posts
-# The queue dataframe should start at the end of the "publish immediately" dataframe (plus one)
-# i.e if the "publish immediately" df index has 273 items total, the queue df index should start at 274
+# The queue dataframe should start  (plus one)
+# Because the dataframe's index is reversed, the queue should start at the end of the "publish immediately" dataframe MINUS one
+# i.e if the post df ended at 277, the queue df should start at 276 and then continue to 0 (the last valid index)
 posts_to_queue = df_posts_to_publish.last_valid_index() - 1
 if (len(df.loc[posts_to_queue:df.last_valid_index()])) <= 300: # we're expecting <300 posts, so add an if check
     for inmate in df.loc[posts_to_queue:df.last_valid_index()].itertuples():
