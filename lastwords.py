@@ -243,7 +243,7 @@ posts_to_publish = int(solve(len(df.index)-300-x, x)[0])
 df_posts_to_publish = df.loc[df.first_valid_index():(df.first_valid_index() - posts_to_publish)]
 # Use Numpy to split the dataframe into sections of roughly 100
 df_posts_to_publish_sections = np.array_split(df_posts_to_publish, (len(df_posts_to_publish) / 100), axis=0)
-for inmate in df_posts_to_publish_sections[0]: # the iterate over the first batch
+for inmate in df_posts_to_publish_sections[0].itertuples(): # the iterate over the first batch
     # Generate the last statement for each inmate
     quote = inmate[11]
     # Generate the rest of the "source" information
@@ -262,7 +262,7 @@ for inmate in df_posts_to_publish_sections[0]: # the iterate over the first batc
 
 try: # Handle the exception using a try/except block if the section doesn't exist https://stackoverflow.com/a/11902480
     gotdata = df_posts_to_publish_sections[1]
-    for inmate in df_posts_to_publish_sections[1]: # the iterate over the second batch
+    for inmate in df_posts_to_publish_sections[1].itertuples(): # the iterate over the second batch
         # Generate the last statement for each inmate
         quote = inmate[11]
         # Generate the rest of the "source" information
@@ -283,7 +283,7 @@ except IndexError:
     
 try:
     gotdata2 = df_posts_to_publish_sections[2]
-    for inmate in df_posts_to_publish_sections[2]: # the iterate over the third batch
+    for inmate in df_posts_to_publish_sections[2].itertuples(): # the iterate over the third batch
         # Generate the last statement for each inmate
         quote = inmate[11]
         # Generate the rest of the "source" information
@@ -304,7 +304,7 @@ except IndexError:
 
 try:
     gotdata3 = df_posts_to_publish_sections[3]  
-    for inmate in df_posts_to_publish_sections[3]: # the iterate over the third batch
+    for inmate in df_posts_to_publish_sections[3].itertuples(): # the iterate over the third batch
         # Generate the last statement for each inmate
         quote = inmate[11]
         # Generate the rest of the "source" information
@@ -325,7 +325,7 @@ except IndexError:
     
 try:
     gotdata4 = df_posts_to_publish_sections[4]  
-    for inmate in df_posts_to_publish_sections[4]: # the iterate over the third batch
+    for inmate in df_posts_to_publish_sections[4].itertuples(): # the iterate over the third batch
         # Generate the last statement for each inmate
         quote = inmate[11]
         # Generate the rest of the "source" information
@@ -346,7 +346,7 @@ except IndexError:
     
 try:
     gotdata5 = df_posts_to_publish_sections[5]  
-    for inmate in df_posts_to_publish_sections[5]: # the iterate over the third batch
+    for inmate in df_posts_to_publish_sections[5].itertuples(): # the iterate over the third batch
         # Generate the last statement for each inmate
         quote = inmate[11]
         # Generate the rest of the "source" information
