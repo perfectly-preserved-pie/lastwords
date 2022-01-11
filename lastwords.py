@@ -256,8 +256,8 @@ for inmate in df_posts_to_publish_sections[0].itertuples(): # the iterate over t
     # Send the API call (the post will be queued) 
     print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
     tumblr_client.create_quote('goodbyewarden', state="published", quote=quote, source=source, tags=tags) 
-    # Wait 24 hours after each batch
-    print("Sleeping for 24 hours...")    
+# Wait 24 hours after each batch
+print("Sleeping for 24 hours...")    
 time.sleep(86400)
 
 try: # Handle the exception using a try/except block if the section doesn't exist https://stackoverflow.com/a/11902480
@@ -275,8 +275,8 @@ try: # Handle the exception using a try/except block if the section doesn't exis
         # Send the API call (the post will be queued) 
         print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         tumblr_client.create_quote('goodbyewarden', state="published", quote=quote, source=source, tags=tags) 
-        # Wait 24 hours after each batch
-        print("Sleeping for 24 hours...")    
+    # Wait 24 hours after each batch
+    print("Sleeping for 24 hours...")    
     time.sleep(86400)    
 except IndexError:
     gotdata = 'null' 
@@ -296,8 +296,8 @@ try:
         # Send the API call (the post will be queued) 
         print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         tumblr_client.create_quote('goodbyewarden', state="published", quote=quote, source=source, tags=tags) 
-        # Wait 24 hours after each batch
-        print("Sleeping for 24 hours...")    
+    # Wait 24 hours after each batch
+    print("Sleeping for 24 hours...")    
     time.sleep(86400)
 except IndexError:
     gotdata2 = 'null' 
@@ -317,8 +317,8 @@ try:
         # Send the API call (the post will be queued) 
         print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         tumblr_client.create_quote('goodbyewarden', state="published", quote=quote, source=source, tags=tags) 
-        # Wait 24 hours after each batch
-        print("Sleeping for 24 hours...")    
+    # Wait 24 hours after each batch
+    print("Sleeping for 24 hours...")    
     time.sleep(86400)
 except IndexError:
     gotdata3 = 'null'
@@ -338,8 +338,8 @@ try:
         # Send the API call (the post will be queued) 
         print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         tumblr_client.create_quote('goodbyewarden', state="published", quote=quote, source=source, tags=tags) 
-        # Wait 24 hours after each batch
-        print("Sleeping for 24 hours...")    
+    # Wait 24 hours after each batch
+    print("Sleeping for 24 hours...")    
     time.sleep(86400)
 except IndexError:
     gotdata4 = 'null'
@@ -359,8 +359,8 @@ try:
         # Send the API call (the post will be queued) 
         print(f"Posting the last statement for {inmate[5]} {inmate[4]}. Index {inmate.Index}")
         tumblr_client.create_quote('goodbyewarden', state="published", quote=quote, source=source, tags=tags) 
-        # Wait 24 hours after each batch
-        print("Sleeping for 24 hours...")    
+    # Wait 24 hours after each batch
+    print("Sleeping for 24 hours...")    
     time.sleep(86400)
 except IndexError:
     gotdata5 = 'null' 
