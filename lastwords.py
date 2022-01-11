@@ -182,6 +182,9 @@ age_plot.bar_label(age_plot.containers[0], label_type='edge')
 # Save the plot as a PNG
 print("Saving the plotted age graph...")
 plt.savefig("/tmp/age_distribution.png", bbox_inches = 'tight')
+# Close the figure window to prevent the next graph from using the same values
+# https://stackoverflow.com/a/8228808
+plt.clf()
 
 # Racial distribution
 race_count = df.groupby('Race')['Execution'].count()
@@ -190,6 +193,9 @@ race_plot.bar_label(race_plot.containers[0], label_type='edge')
 # Save the plot as a PNG
 print("Saving the plotted race graph...")
 plt.savefig("/tmp/racial_distribution.png", bbox_inches = 'tight')
+# Close the figure window to prevent the next graph from using the same values
+# https://stackoverflow.com/a/8228808
+plt.clf()
 
 print(f"{len(df.index)} total last statements.")
 print(f"{empty_statements} inmates declined to give a last statement.")
