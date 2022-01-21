@@ -22,5 +22,5 @@ A Python script that posts the last words of each inmate on [Texas's death row](
     
 ## Lessons Learned
 
-This was my very first Python project 👶 Check out [my blog post](https://automateordie.io/Last-Words-Project/) where I write about the whole process!
+This was my very first Python project 👶 Check out [my blog post](https://automateordie.io/lastwords/) where I write about the whole process!
 
