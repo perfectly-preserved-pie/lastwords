@@ -36,6 +36,7 @@ jobs:
         run: |
           mkdir -p data
           docker run --rm \
+            --user "$(id -u):$(id -g)" \
             -e TUMBLR_CONSUMER_KEY \
             -e TUMBLR_CONSUMER_SECRET \
             -e TUMBLR_OAUTH_TOKEN \
