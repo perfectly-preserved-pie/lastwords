@@ -1,0 +1,61 @@
+name: Weekly TDCJ Sync
+
+on:
+  schedule:
+    - cron: "0 15 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: weekly-tdcj-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build container
+        run: docker build -t lastwords-sync .
+
+      - name: Run weekly sync
+        env:
+          TUMBLR_CONSUMER_KEY: ${{ secrets.TUMBLR_CONSUMER_KEY }}
+          TUMBLR_CONSUMER_SECRET: ${{ secrets.TUMBLR_CONSUMER_SECRET }}
+          TUMBLR_OAUTH_TOKEN: ${{ secrets.TUMBLR_OAUTH_TOKEN }}
+          TUMBLR_OAUTH_SECRET: ${{ secrets.TUMBLR_OAUTH_SECRET }}
+          LASTWORDS_BLOG_NAME: ${{ vars.LASTWORDS_BLOG_NAME || 'goodbyewarden' }}
+          LASTWORDS_BLOG_HOSTNAME: ${{ vars.LASTWORDS_BLOG_HOSTNAME || 'lastwords.fyi' }}
+          LASTWORDS_POST_STATE: ${{ vars.LASTWORDS_POST_STATE || 'published' }}
+          LASTWORDS_MAX_POSTS: ${{ vars.LASTWORDS_MAX_POSTS }}
+          LASTWORDS_STATE_FILE: /app/data/state.json
+        run: |
+          mkdir -p data
+          docker run --rm \
+            -e TUMBLR_CONSUMER_KEY \
+            -e TUMBLR_CONSUMER_SECRET \
+            -e TUMBLR_OAUTH_TOKEN \
+            -e TUMBLR_OAUTH_SECRET \
+            -e LASTWORDS_BLOG_NAME \
+            -e LASTWORDS_BLOG_HOSTNAME \
+            -e LASTWORDS_POST_STATE \
+            -e LASTWORDS_MAX_POSTS \
+            -e LASTWORDS_STATE_FILE \
+            -v "${{ github.workspace }}/data:/app/data" \
+            lastwords-sync
+
+      - name: Commit updated state
+        run: |
+          if git diff --quiet -- data/state.json; then
+            echo "No state changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/state.json
+          git commit -m "Update lastwords state"
+          git push
