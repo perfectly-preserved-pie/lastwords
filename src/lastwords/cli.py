@@ -166,6 +166,10 @@ def run_sync(args: argparse.Namespace) -> int:
     skipped: list[dict[str, Any]] = []
     would_post_count = 0
     poster: TumblrPoster | None = None
+    if pending_records and not args.dry_run:
+        poster = TumblrPoster(settings)
+        logger.info("Checking Tumblr credentials...")
+        poster.validate_authentication()
 
     for record in pending_records:
         logger.info("Fetching statement text for execution {}...", record.execution)

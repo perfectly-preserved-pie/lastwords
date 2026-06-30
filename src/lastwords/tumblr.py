@@ -144,6 +144,26 @@ class TumblrPoster:
             settings.oauth_secret,
         )
 
+    def validate_authentication(self) -> None:
+        """Ensure Tumblr accepts the configured OAuth credentials.
+
+        Args:
+            None.
+
+        Returns:
+            None: This method returns successfully when Tumblr returns user info.
+        """
+        response = self.client.info()
+        validate_tumblr_response(
+            response,
+            action="authenticate with Tumblr",
+            hint=(
+                "Regenerate TUMBLR_OAUTH_TOKEN and TUMBLR_OAUTH_SECRET for the "
+                "Tumblr account that owns the target blog, and keep them paired "
+                "with the same TUMBLR_CONSUMER_KEY and TUMBLR_CONSUMER_SECRET."
+            ),
+        )
+
     def create_quote(self, record: ExecutionRecord) -> dict[str, Any]:
         """Create a quote post on Tumblr for a single execution record.
 
@@ -170,6 +190,35 @@ class TumblrPoster:
         return response
 
 
+def validate_tumblr_response(response: Any, *, action: str, hint: str | None = None) -> None:
+    """Raise a useful error when pytumblr returns a Tumblr error payload.
+
+    Args:
+        response: Raw response returned by pytumblr.
+        action: Human-readable action used in the error message.
+        hint: Optional recovery guidance appended to the error message.
+
+    Returns:
+        None: This method returns successfully when no Tumblr error is present.
+    """
+    if not isinstance(response, dict):
+        raise ValueError("Unexpected Tumblr API response shape.")
+
+    meta = response.get("meta")
+    if not isinstance(meta, dict):
+        return
+
+    status = meta.get("status")
+    if isinstance(status, int) and 200 <= status <= 399:
+        return
+
+    error = response.get("response") or response.get("errors")
+    message = f"Tumblr could not {action}: meta={meta!r}, response={error!r}"
+    if hint:
+        message = f"{message}. {hint}"
+    raise ValueError(message)
+
+
 def validate_created_post_response(response: Any) -> None:
     """Ensure Tumblr returned a successful create-post response.
 
@@ -187,10 +236,14 @@ def validate_created_post_response(response: Any) -> None:
     if response.get("id") or response.get("id_string"):
         return
 
-    meta = response.get("meta")
-    error = response.get("response") or response.get("errors")
-    if meta or error:
-        raise ValueError(f"Tumblr did not create a post: meta={meta!r}, response={error!r}")
+    validate_tumblr_response(
+        response,
+        action="create a post",
+        hint=(
+            "Check that the OAuth access token and secret are valid for the "
+            "Tumblr account that owns the target blog."
+        ),
+    )
     raise ValueError(f"Tumblr did not return a post id: {response!r}")
 
 

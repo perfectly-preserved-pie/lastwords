@@ -3,6 +3,7 @@ from lastwords.tumblr import (
     extract_statement_url_from_quote_source,
     parse_public_read_json,
     validate_created_post_response,
+    validate_tumblr_response,
 )
 
 EXECUTIONS_HTML = """
@@ -103,11 +104,28 @@ def test_validate_created_post_response_rejects_tumblr_error() -> None:
                 "meta": {"status": 401, "msg": "Unauthorized"},
                 "response": {"errors": ["Not Authorized"]},
             }
-        )
+    )
     except ValueError as exc:
-        assert "Tumblr did not create a post" in str(exc)
+        assert "Tumblr could not create a post" in str(exc)
     else:
         raise AssertionError("Expected a ValueError for a Tumblr error response.")
+
+
+def test_validate_tumblr_response_includes_recovery_hint() -> None:
+    try:
+        validate_tumblr_response(
+            {
+                "meta": {"status": 401, "msg": "Unauthorized"},
+                "response": [{"code": 1016, "detail": "Unable to authorize"}],
+            },
+            action="authenticate with Tumblr",
+            hint="Regenerate the OAuth token and secret.",
+        )
+    except ValueError as exc:
+        assert "Tumblr could not authenticate with Tumblr" in str(exc)
+        assert "Regenerate the OAuth token and secret" in str(exc)
+    else:
+        raise AssertionError("Expected a ValueError for a Tumblr auth error.")
 
 
 def test_validate_created_post_response_requires_post_id() -> None:
