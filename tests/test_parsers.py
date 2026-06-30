@@ -2,6 +2,7 @@ from lastwords.tdcj import parse_executions_html, parse_statement_html
 from lastwords.tumblr import (
     extract_statement_url_from_quote_source,
     parse_public_read_json,
+    validate_created_post_response,
 )
 
 EXECUTIONS_HTML = """
@@ -89,3 +90,30 @@ def test_parse_public_read_json_and_extract_statement_url() -> None:
         extract_statement_url_from_quote_source(post["quote-source"])
         == "https://www.tdcj.texas.gov/death_row/dr_info/hummeljohnlast.html"
     )
+
+
+def test_validate_created_post_response_accepts_post_id() -> None:
+    validate_created_post_response({"id": 1234567890})
+
+
+def test_validate_created_post_response_rejects_tumblr_error() -> None:
+    try:
+        validate_created_post_response(
+            {
+                "meta": {"status": 401, "msg": "Unauthorized"},
+                "response": {"errors": ["Not Authorized"]},
+            }
+        )
+    except ValueError as exc:
+        assert "Tumblr did not create a post" in str(exc)
+    else:
+        raise AssertionError("Expected a ValueError for a Tumblr error response.")
+
+
+def test_validate_created_post_response_requires_post_id() -> None:
+    try:
+        validate_created_post_response({"state": "published"})
+    except ValueError as exc:
+        assert "post id" in str(exc)
+    else:
+        raise AssertionError("Expected a ValueError when no post id is returned.")

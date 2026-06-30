@@ -166,9 +166,32 @@ class TumblrPoster:
             source=build_quote_source(record),
             tags=build_tags(record),
         )
-        if not isinstance(response, dict):
-            raise ValueError("Unexpected Tumblr API response shape.")
+        validate_created_post_response(response)
         return response
+
+
+def validate_created_post_response(response: Any) -> None:
+    """Ensure Tumblr returned a successful create-post response.
+
+    Args:
+        response: Raw response returned by pytumblr.
+
+    Returns:
+        None: This method returns successfully when the response has a post id.
+
+    Raises:
+        ValueError: Raised when Tumblr returned an error or an unexpected payload.
+    """
+    if not isinstance(response, dict):
+        raise ValueError("Unexpected Tumblr API response shape.")
+    if response.get("id") or response.get("id_string"):
+        return
+
+    meta = response.get("meta")
+    error = response.get("response") or response.get("errors")
+    if meta or error:
+        raise ValueError(f"Tumblr did not create a post: meta={meta!r}, response={error!r}")
+    raise ValueError(f"Tumblr did not return a post id: {response!r}")
 
 
 def build_quote_source(record: ExecutionRecord) -> str:
