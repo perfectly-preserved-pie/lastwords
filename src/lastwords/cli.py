@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from dataclasses import replace
 from datetime import datetime, UTC
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qs, urlparse
 
 import requests
 from loguru import logger
+from requests_oauthlib import OAuth1Session
 
 from lastwords.config import Settings
 from lastwords.state import load_state, save_state
@@ -19,6 +22,11 @@ from lastwords.tdcj import (
     sort_oldest_first,
 )
 from lastwords.tumblr import TumblrPoster, fetch_existing_quotes
+
+TUMBLR_REQUEST_TOKEN_URL = "https://www.tumblr.com/oauth/request_token"
+TUMBLR_AUTHORIZE_URL = "https://www.tumblr.com/oauth/authorize"
+TUMBLR_ACCESS_TOKEN_URL = "https://www.tumblr.com/oauth/access_token"
+DEFAULT_TUMBLR_CALLBACK_URL = "https://lastwords.fyi/"
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -69,6 +77,34 @@ def build_parser() -> argparse.ArgumentParser:
         help="HTTP timeout in seconds.",
     )
 
+    auth_parser = subparsers.add_parser(
+        "tumblr-auth",
+        help="Generate Tumblr OAuth token secrets from a consumer key and secret.",
+    )
+    auth_parser.add_argument(
+        "--consumer-key",
+        default=None,
+        help="Tumblr OAuth consumer key. Defaults to TUMBLR_CONSUMER_KEY.",
+    )
+    auth_parser.add_argument(
+        "--consumer-secret",
+        default=None,
+        help="Tumblr OAuth consumer secret. Defaults to TUMBLR_CONSUMER_SECRET.",
+    )
+    auth_parser.add_argument(
+        "--verifier",
+        default=None,
+        help="OAuth verifier, or the full redirected callback URL from Tumblr.",
+    )
+    auth_parser.add_argument(
+        "--callback-url",
+        default=None,
+        help=(
+            "OAuth callback URL registered on the Tumblr application. Defaults "
+            "to TUMBLR_CALLBACK_URL or https://lastwords.fyi/."
+        ),
+    )
+
     return parser
 
 
@@ -98,8 +134,104 @@ def main(argv: list[str] | None = None) -> int:
     if args.command in (None, "sync"):
         return run_sync(args)
 
+    if args.command == "tumblr-auth":
+        return run_tumblr_auth(args)
+
     parser.error(f"Unknown command: {args.command}")
     return 2
+
+
+def run_tumblr_auth(args: argparse.Namespace) -> int:
+    """Run Tumblr's OAuth 1.0a authorization flow.
+
+    Args:
+        args: Parsed command-line arguments for the auth command.
+
+    Returns:
+        int: Process exit code for the authorization operation.
+    """
+    consumer_key = args.consumer_key or os.getenv("TUMBLR_CONSUMER_KEY")
+    consumer_secret = args.consumer_secret or os.getenv("TUMBLR_CONSUMER_SECRET")
+    callback_url = (
+        args.callback_url
+        or os.getenv("TUMBLR_CALLBACK_URL")
+        or DEFAULT_TUMBLR_CALLBACK_URL
+    )
+    missing = [
+        name
+        for name, value in (
+            ("TUMBLR_CONSUMER_KEY", consumer_key),
+            ("TUMBLR_CONSUMER_SECRET", consumer_secret),
+        )
+        if not value
+    ]
+    if missing:
+        logger.error("Missing Tumblr app credentials: {}", ", ".join(missing))
+        return 1
+
+    request_session = OAuth1Session(
+        consumer_key,
+        client_secret=consumer_secret,
+        callback_uri=callback_url,
+    )
+    request_token = request_session.fetch_request_token(TUMBLR_REQUEST_TOKEN_URL)
+    resource_owner_key = request_token.get("oauth_token")
+    resource_owner_secret = request_token.get("oauth_token_secret")
+    if not resource_owner_key or not resource_owner_secret:
+        logger.error("Tumblr did not return a request token.")
+        return 1
+
+    authorization_url = request_session.authorization_url(TUMBLR_AUTHORIZE_URL)
+    logger.info("Open this URL while logged into the Tumblr account that owns the blog:")
+    logger.info(authorization_url)
+
+    verifier_input = args.verifier or input(
+        "Paste the OAuth verifier or full redirected callback URL from Tumblr: "
+    ).strip()
+    verifier = parse_oauth_verifier(verifier_input)
+    if not verifier:
+        logger.error("No OAuth verifier provided.")
+        return 1
+
+    access_session = OAuth1Session(
+        consumer_key,
+        client_secret=consumer_secret,
+        resource_owner_key=resource_owner_key,
+        resource_owner_secret=resource_owner_secret,
+        verifier=verifier,
+    )
+    access_token = access_session.fetch_access_token(TUMBLR_ACCESS_TOKEN_URL)
+    oauth_token = access_token.get("oauth_token")
+    oauth_secret = access_token.get("oauth_token_secret")
+    if not oauth_token or not oauth_secret:
+        logger.error("Tumblr did not return an access token and secret.")
+        return 1
+
+    logger.info("Add these as GitHub repository secrets:")
+    logger.info("TUMBLR_OAUTH_TOKEN={}", oauth_token)
+    logger.info("TUMBLR_OAUTH_SECRET={}", oauth_secret)
+    return 0
+
+
+def parse_oauth_verifier(value: str) -> str:
+    """Extract an OAuth verifier from a raw verifier or redirected URL.
+
+    Args:
+        value: Raw verifier text or the full callback URL from Tumblr.
+
+    Returns:
+        str: The extracted verifier, or an empty string when not present.
+    """
+    value = value.strip()
+    if not value:
+        return ""
+    parsed = urlparse(value)
+    if parsed.query:
+        query = parse_qs(parsed.query)
+        verifier = query.get("oauth_verifier", [""])[0]
+        if verifier:
+            return verifier
+    return value
 
 
 def run_sync(args: argparse.Namespace) -> int:

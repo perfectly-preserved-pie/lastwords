@@ -1,3 +1,4 @@
+from lastwords.cli import parse_oauth_verifier
 from lastwords.tdcj import parse_executions_html, parse_statement_html
 from lastwords.tumblr import (
     extract_statement_url_from_quote_source,
@@ -104,7 +105,7 @@ def test_validate_created_post_response_rejects_tumblr_error() -> None:
                 "meta": {"status": 401, "msg": "Unauthorized"},
                 "response": {"errors": ["Not Authorized"]},
             }
-    )
+        )
     except ValueError as exc:
         assert "Tumblr could not create a post" in str(exc)
     else:
@@ -135,3 +136,13 @@ def test_validate_created_post_response_requires_post_id() -> None:
         assert "post id" in str(exc)
     else:
         raise AssertionError("Expected a ValueError when no post id is returned.")
+
+
+def test_parse_oauth_verifier_from_callback_url() -> None:
+    assert (
+        parse_oauth_verifier(
+            "https://lastwords.fyi/?oauth_token=request-token&oauth_verifier=abc123"
+        )
+        == "abc123"
+    )
+    assert parse_oauth_verifier("abc123") == "abc123"
