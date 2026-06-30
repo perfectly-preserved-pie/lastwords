@@ -1,5 +1,7 @@
 from lastwords.cli import parse_oauth_verifier
-from lastwords.tdcj import parse_executions_html, parse_statement_html
+from requests import Response
+
+from lastwords.tdcj import decode_tdcj_response, parse_executions_html, parse_statement_html
 from lastwords.tumblr import (
     extract_statement_url_from_quote_source,
     parse_public_read_json,
@@ -81,6 +83,14 @@ def test_parse_statement_html_joins_paragraphs() -> None:
 
 def test_parse_statement_html_filters_empty_markers() -> None:
     assert parse_statement_html(NO_STATEMENT_HTML) is None
+
+
+def test_decode_tdcj_response_preserves_smart_punctuation() -> None:
+    response = Response()
+    response._content = "I’m sorry, y’all. Don’t hate me.".encode("utf-8")
+    response.encoding = "ISO-8859-1"
+
+    assert decode_tdcj_response(response) == "I’m sorry, y’all. Don’t hate me."
 
 
 def test_parse_public_read_json_and_extract_statement_url() -> None:

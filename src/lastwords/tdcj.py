@@ -27,6 +27,11 @@ NON_STATEMENT_MARKERS = {
 }
 
 
+def decode_tdcj_response(response: requests.Response) -> str:
+    """Decode TDCJ HTML as UTF-8 before requests guesses a fallback charset."""
+    return response.content.decode("utf-8-sig")
+
+
 def normalize_whitespace(text: str) -> str:
     """Collapse repeated whitespace into single spaces.
 
@@ -113,7 +118,7 @@ def fetch_executions(session: requests.Session, *, timeout: float) -> list[Execu
     """
     response = session.get(EXECUTIONS_URL, timeout=timeout)
     response.raise_for_status()
-    return parse_executions_html(response.text, base_url=response.url)
+    return parse_executions_html(decode_tdcj_response(response), base_url=response.url)
 
 
 def parse_statement_html(html_text: str) -> str | None:
@@ -172,7 +177,7 @@ def fetch_statement_text(
     """
     response = session.get(statement_url, timeout=timeout)
     response.raise_for_status()
-    return parse_statement_html(response.text)
+    return parse_statement_html(decode_tdcj_response(response))
 
 
 def sort_oldest_first(records: Iterable[ExecutionRecord]) -> list[ExecutionRecord]:
