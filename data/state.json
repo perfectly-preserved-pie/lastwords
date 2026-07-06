@@ -506,13 +506,13 @@
   ],
   "last_result": {
     "dry_run": false,
-    "pending_count": 27,
-    "posted_count": 27,
+    "pending_count": 0,
+    "posted_count": 0,
     "skipped_count": 0,
     "would_post_count": 0
   },
-  "last_run_at": "2026-06-30T23:37:27.037431+00:00",
-  "latest_public_execution_seen": 572,
+  "last_run_at": "2026-07-06T16:10:12.916446+00:00",
+  "latest_public_execution_seen": 600,
   "latest_tdcj_execution_seen": 600,
   "most_recent_post": {
     "execution": 600,
