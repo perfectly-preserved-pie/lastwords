@@ -267,6 +267,8 @@ def run_sync(args: argparse.Namespace) -> int:
         session,
         blog_hostname=settings.blog_hostname,
         timeout=settings.request_timeout,
+        api_key=settings.consumer_key,
+        blog_name=settings.blog_name,
     )
     public_statement_urls = {
         normalize_statement_url(reference.statement_url) for reference in public_quotes

@@ -4,6 +4,7 @@ import json
 import re
 from html import unescape
 from typing import Any
+from urllib.parse import quote
 
 import pytumblr
 import requests
@@ -13,6 +14,7 @@ from lastwords.config import Settings
 from lastwords.models import ExecutionRecord, TumblrQuoteReference
 
 READ_API_PAGE_SIZE = 50
+V2_API_PAGE_SIZE = 20
 EXECUTION_TAG_PATTERN = re.compile(r"\bExecution\s+(\d+)\b", re.IGNORECASE)
 
 
@@ -75,17 +77,87 @@ def fetch_existing_quotes(
     *,
     blog_hostname: str,
     timeout: float,
+    api_key: str | None = None,
+    blog_name: str | None = None,
 ) -> list[TumblrQuoteReference]:
-    """Fetch all existing public quote posts from the Tumblr read API.
+    """Fetch all existing public quote posts from Tumblr.
 
     Args:
         session: Requests session used for HTTP requests.
         blog_hostname: Public hostname for the Tumblr blog.
         timeout: HTTP timeout in seconds.
+        api_key: Optional Tumblr consumer key used for the supported v2 API.
+        blog_name: Tumblr blog name used with the v2 API.
 
     Returns:
         list[TumblrQuoteReference]: Public quote references used for deduplication.
     """
+    if api_key and blog_name:
+        return _fetch_existing_quotes_v2(
+            session,
+            blog_name=blog_name,
+            api_key=api_key,
+            timeout=timeout,
+        )
+
+    return _fetch_existing_quotes_legacy(
+        session,
+        blog_hostname=blog_hostname,
+        timeout=timeout,
+    )
+
+
+def _fetch_existing_quotes_v2(
+    session: requests.Session,
+    *,
+    blog_name: str,
+    api_key: str,
+    timeout: float,
+) -> list[TumblrQuoteReference]:
+    """Fetch quote posts through Tumblr's supported v2 API."""
+    references: list[TumblrQuoteReference] = []
+    offset = 0
+    total: int | None = None
+    blog_identifier = blog_name if "." in blog_name else f"{blog_name}.tumblr.com"
+    url = f"https://api.tumblr.com/v2/blog/{quote(blog_identifier, safe='')}/posts/quote"
+
+    while total is None or offset < total:
+        response = session.get(
+            url,
+            params={
+                "api_key": api_key,
+                "limit": V2_API_PAGE_SIZE,
+                "offset": offset,
+                "npf": "false",
+            },
+            timeout=timeout,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        meta = payload.get("meta", {})
+        status = meta.get("status")
+        if not isinstance(status, int) or not 200 <= status <= 399:
+            raise ValueError(f"Tumblr could not read blog posts: meta={meta!r}")
+
+        api_response = payload.get("response", {})
+        total = int(api_response.get("total_posts", 0))
+        posts = api_response.get("posts", [])
+        if not posts:
+            break
+
+        references.extend(_quote_references_from_posts(posts, source_field="source"))
+        offset += len(posts)
+
+    return references
+
+
+def _fetch_existing_quotes_legacy(
+    session: requests.Session,
+    *,
+    blog_hostname: str,
+    timeout: float,
+) -> list[TumblrQuoteReference]:
+    """Fetch quote posts through Tumblr's legacy public read endpoint."""
     references: list[TumblrQuoteReference] = []
     start = 0
     total: int | None = None
@@ -104,21 +176,31 @@ def fetch_existing_quotes(
         if not posts:
             break
 
-        for post in posts:
-            statement_url = extract_statement_url_from_quote_source(post.get("quote-source", ""))
-            if statement_url is None:
-                continue
-
-            references.append(
-                TumblrQuoteReference(
-                    statement_url=statement_url,
-                    execution=extract_execution_from_tags(post.get("tags", [])),
-                    post_id=post.get("id"),
-                )
-            )
-
+        references.extend(_quote_references_from_posts(posts, source_field="quote-source"))
         start += len(posts)
 
+    return references
+
+
+def _quote_references_from_posts(
+    posts: list[dict[str, Any]],
+    *,
+    source_field: str,
+) -> list[TumblrQuoteReference]:
+    """Convert Tumblr post dictionaries into deduplication references."""
+    references: list[TumblrQuoteReference] = []
+    for post in posts:
+        statement_url = extract_statement_url_from_quote_source(post.get(source_field, ""))
+        if statement_url is None:
+            continue
+
+        references.append(
+            TumblrQuoteReference(
+                statement_url=statement_url,
+                execution=extract_execution_from_tags(post.get("tags", [])),
+                post_id=post.get("id"),
+            )
+        )
     return references
 
 

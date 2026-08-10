@@ -1,9 +1,12 @@
+import json
+
 from lastwords.cli import parse_oauth_verifier
-from requests import Response
+from requests import PreparedRequest, Response, Session
 
 from lastwords.tdcj import decode_tdcj_response, parse_executions_html, parse_statement_html
 from lastwords.tumblr import (
     extract_statement_url_from_quote_source,
+    fetch_existing_quotes,
     parse_public_read_json,
     validate_created_post_response,
     validate_tumblr_response,
@@ -102,6 +105,68 @@ def test_parse_public_read_json_and_extract_statement_url() -> None:
         extract_statement_url_from_quote_source(post["quote-source"])
         == "https://www.tdcj.texas.gov/death_row/dr_info/hummeljohnlast.html"
     )
+
+
+class StubSession(Session):
+    def __init__(self, responses: list[Response]) -> None:
+        super().__init__()
+        self.responses = responses
+        self.requests: list[PreparedRequest] = []
+
+    def send(self, request: PreparedRequest, **kwargs: object) -> Response:
+        self.requests.append(request)
+        response = self.responses.pop(0)
+        response.request = request
+        return response
+
+
+def json_response(payload: dict[str, object]) -> Response:
+    response = Response()
+    response.status_code = 200
+    response._content = json.dumps(payload).encode()
+    response.headers["Content-Type"] = "application/json"
+    return response
+
+
+def test_fetch_existing_quotes_uses_v2_api_when_key_is_available() -> None:
+    session = StubSession(
+        [
+            json_response(
+                {
+                    "meta": {"status": 200, "msg": "OK"},
+                    "response": {
+                        "total_posts": 1,
+                        "posts": [
+                            {
+                                "id": 123,
+                                "tags": ["John Hummel", "Execution 572"],
+                                "source": (
+                                    '<a href="https://www.tdcj.texas.gov/death_row/'
+                                    'dr_info/hummeljohnlast.html">Last Statement</a>'
+                                ),
+                            }
+                        ],
+                    },
+                }
+            )
+        ]
+    )
+
+    references = fetch_existing_quotes(
+        session,
+        blog_hostname="lastwords.fyi",
+        blog_name="goodbyewarden",
+        api_key="consumer-key",
+        timeout=30,
+    )
+
+    assert len(references) == 1
+    assert references[0].execution == 572
+    assert references[0].post_id == 123
+    assert session.requests[0].url.startswith(
+        "https://api.tumblr.com/v2/blog/goodbyewarden.tumblr.com/posts/quote?"
+    )
+    assert "api_key=consumer-key" in session.requests[0].url
 
 
 def test_validate_created_post_response_accepts_post_id() -> None:
