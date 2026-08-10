@@ -32,8 +32,11 @@ class ExecutionRecord:
 
 @dataclass(frozen=True, slots=True)
 class TumblrQuoteReference:
-    """Minimal Tumblr quote metadata used for deduplication."""
+    """Tumblr quote metadata used for deduplication and repairs."""
 
     statement_url: str
     execution: int | None
     post_id: str | None
+    quote_text: str = ""
+    source_html: str = ""
+    tags: tuple[str, ...] = ()

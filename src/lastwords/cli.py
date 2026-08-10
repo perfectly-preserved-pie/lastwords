@@ -21,7 +21,7 @@ from lastwords.tdcj import (
     normalize_statement_url,
     sort_oldest_first,
 )
-from lastwords.tumblr import TumblrPoster, fetch_existing_quotes
+from lastwords.tumblr import TumblrPoster, fetch_existing_quotes, has_suspicious_encoding
 
 TUMBLR_REQUEST_TOKEN_URL = "https://www.tumblr.com/oauth/request_token"
 TUMBLR_AUTHORIZE_URL = "https://www.tumblr.com/oauth/authorize"
@@ -284,6 +284,15 @@ def run_sync(args: argparse.Namespace) -> int:
         (reference.execution for reference in public_quotes if reference.execution is not None),
         default=None,
     )
+    records_by_statement_url = {
+        normalize_statement_url(record.statement_url): record for record in tdcj_records
+    }
+    repair_pairs = [
+        (reference, records_by_statement_url.get(normalize_statement_url(reference.statement_url)))
+        for reference in public_quotes
+        if reference.post_id is not None and has_suspicious_encoding(reference.quote_text)
+    ]
+    repair_pairs = [(reference, record) for reference, record in repair_pairs if record is not None]
 
     pending_records = [
         record
@@ -295,15 +304,52 @@ def run_sync(args: argparse.Namespace) -> int:
         pending_records = pending_records[: settings.max_posts]
 
     logger.info("Found {} missing statement(s) to process.", len(pending_records))
+    logger.info("Found {} existing post(s) with suspicious encoding.", len(repair_pairs))
 
     posted: list[dict[str, Any]] = []
     skipped: list[dict[str, Any]] = []
     would_post_count = 0
+    repaired_count = 0
+    would_repair_count = 0
     poster: TumblrPoster | None = None
-    if pending_records and not args.dry_run:
+    if (pending_records or repair_pairs) and not args.dry_run:
         poster = TumblrPoster(settings)
         logger.info("Checking Tumblr credentials...")
         poster.validate_authentication()
+
+    for reference, record in repair_pairs:
+        logger.info("Fetching clean text for execution {}...", record.execution)
+        statement_text = fetch_statement_text(
+            session,
+            record.statement_url,
+            timeout=settings.request_timeout,
+        )
+        if statement_text is None:
+            logger.warning(
+                "Cannot repair post {} because TDCJ has no statement text.",
+                reference.post_id,
+            )
+            continue
+
+        if args.dry_run:
+            logger.info(
+                "Dry run: would repair post {} for execution {}.",
+                reference.post_id,
+                record.execution,
+            )
+            would_repair_count += 1
+            continue
+
+        if poster is None:
+            poster = TumblrPoster(settings)
+        poster.edit_quote(
+            reference.post_id,
+            replace(record, statement_text=statement_text),
+            source_html=reference.source_html,
+            tags=reference.tags,
+        )
+        repaired_count += 1
+        logger.info("Repaired post {} for execution {}.", reference.post_id, record.execution)
 
     for record in pending_records:
         logger.info("Fetching statement text for execution {}...", record.execution)
@@ -366,7 +412,9 @@ def run_sync(args: argparse.Namespace) -> int:
         "dry_run": args.dry_run,
         "pending_count": len(pending_records),
         "would_post_count": would_post_count,
+        "would_repair_count": would_repair_count,
         "posted_count": len(posted),
+        "repaired_count": repaired_count,
         "skipped_count": len(skipped),
     }
     if posted:
@@ -381,7 +429,9 @@ def run_sync(args: argparse.Namespace) -> int:
     logger.info("Latest public Tumblr execution seen: {}", latest_public_execution)
     if args.dry_run:
         logger.info("Would post this run: {}", would_post_count)
+        logger.info("Would repair this run: {}", would_repair_count)
     logger.info("Posted this run: {}", len(posted))
+    logger.info("Repaired this run: {}", repaired_count)
     logger.info("Skipped this run: {}", len(skipped))
     logger.info("State written to {}", settings.state_file)
     return 0

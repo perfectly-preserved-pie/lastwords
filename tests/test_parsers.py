@@ -7,6 +7,7 @@ from lastwords.tdcj import decode_tdcj_response, parse_executions_html, parse_st
 from lastwords.tumblr import (
     extract_statement_url_from_quote_source,
     fetch_existing_quotes,
+    has_suspicious_encoding,
     parse_public_read_json,
     validate_created_post_response,
     validate_tumblr_response,
@@ -140,6 +141,7 @@ def test_fetch_existing_quotes_uses_v2_api_when_key_is_available() -> None:
                             {
                                 "id": 123,
                                 "tags": ["John Hummel", "Execution 572"],
+                                "text": "I’m ready, Warden.",
                                 "source": (
                                     '<a href="https://www.tdcj.texas.gov/death_row/'
                                     'dr_info/hummeljohnlast.html">Last Statement</a>'
@@ -162,11 +164,18 @@ def test_fetch_existing_quotes_uses_v2_api_when_key_is_available() -> None:
 
     assert len(references) == 1
     assert references[0].execution == 572
-    assert references[0].post_id == 123
+    assert references[0].post_id == "123"
+    assert references[0].quote_text == "I’m ready, Warden."
     assert session.requests[0].url.startswith(
         "https://api.tumblr.com/v2/blog/goodbyewarden.tumblr.com/posts/quote?"
     )
     assert "api_key=consumer-key" in session.requests[0].url
+
+
+def test_has_suspicious_encoding_detects_mojibake() -> None:
+    assert has_suspicious_encoding("Iâ\x80\x99m sorry.")
+    assert has_suspicious_encoding("I did.Â I regret it.")
+    assert not has_suspicious_encoding("I’m sorry. Señor García, forgive me.")
 
 
 def test_validate_created_post_response_accepts_post_id() -> None:

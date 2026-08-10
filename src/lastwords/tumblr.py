@@ -9,6 +9,7 @@ from urllib.parse import quote
 import pytumblr
 import requests
 from bs4 import BeautifulSoup
+from ftfy.badness import is_bad
 
 from lastwords.config import Settings
 from lastwords.models import ExecutionRecord, TumblrQuoteReference
@@ -16,6 +17,11 @@ from lastwords.models import ExecutionRecord, TumblrQuoteReference
 READ_API_PAGE_SIZE = 50
 V2_API_PAGE_SIZE = 20
 EXECUTION_TAG_PATTERN = re.compile(r"\bExecution\s+(\d+)\b", re.IGNORECASE)
+
+
+def has_suspicious_encoding(text: str) -> bool:
+    """Return whether text contains a common UTF-8 mojibake sequence."""
+    return is_bad(text)
 
 
 def parse_public_read_json(body: str) -> dict[str, Any]:
@@ -145,7 +151,13 @@ def _fetch_existing_quotes_v2(
         if not posts:
             break
 
-        references.extend(_quote_references_from_posts(posts, source_field="source"))
+        references.extend(
+            _quote_references_from_posts(
+                posts,
+                source_field="source",
+                text_field="text",
+            )
+        )
         offset += len(posts)
 
     return references
@@ -176,7 +188,13 @@ def _fetch_existing_quotes_legacy(
         if not posts:
             break
 
-        references.extend(_quote_references_from_posts(posts, source_field="quote-source"))
+        references.extend(
+            _quote_references_from_posts(
+                posts,
+                source_field="quote-source",
+                text_field="quote-text",
+            )
+        )
         start += len(posts)
 
     return references
@@ -186,11 +204,13 @@ def _quote_references_from_posts(
     posts: list[dict[str, Any]],
     *,
     source_field: str,
+    text_field: str,
 ) -> list[TumblrQuoteReference]:
     """Convert Tumblr post dictionaries into deduplication references."""
     references: list[TumblrQuoteReference] = []
     for post in posts:
-        statement_url = extract_statement_url_from_quote_source(post.get(source_field, ""))
+        source_html = post.get(source_field, "")
+        statement_url = extract_statement_url_from_quote_source(source_html)
         if statement_url is None:
             continue
 
@@ -198,7 +218,10 @@ def _quote_references_from_posts(
             TumblrQuoteReference(
                 statement_url=statement_url,
                 execution=extract_execution_from_tags(post.get("tags", [])),
-                post_id=post.get("id"),
+                post_id=str(post["id"]) if post.get("id") is not None else None,
+                quote_text=post.get(text_field, ""),
+                source_html=source_html,
+                tags=tuple(post.get("tags", [])),
             )
         )
     return references
@@ -269,6 +292,29 @@ class TumblrPoster:
             tags=build_tags(record),
         )
         validate_created_post_response(response)
+        return response
+
+    def edit_quote(
+        self,
+        post_id: str,
+        record: ExecutionRecord,
+        *,
+        source_html: str,
+        tags: tuple[str, ...],
+    ) -> dict[str, Any]:
+        """Replace a quote's text while preserving its source and tags."""
+        if record.statement_text is None:
+            raise ValueError("Cannot edit a Tumblr quote without statement text.")
+
+        response = self.client.edit_post(
+            self.blog_name,
+            id=post_id,
+            type="quote",
+            quote=record.statement_text,
+            source=source_html,
+            tags=list(tags),
+        )
+        validate_tumblr_response(response, action=f"edit post {post_id}")
         return response
 
 
