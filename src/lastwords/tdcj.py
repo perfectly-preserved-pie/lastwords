@@ -28,7 +28,14 @@ NON_STATEMENT_MARKERS = {
 
 
 def decode_tdcj_response(response: requests.Response) -> str:
-    """Decode TDCJ HTML as UTF-8 before requests guesses a fallback charset."""
+    """Decode a TDCJ response as UTF-8.
+
+    Args:
+        response: HTTP response containing TDCJ HTML.
+
+    Returns:
+        Decoded HTML with an optional byte-order mark removed.
+    """
     return response.content.decode("utf-8-sig")
 
 

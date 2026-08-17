@@ -20,7 +20,14 @@ EXECUTION_TAG_PATTERN = re.compile(r"\bExecution\s+(\d+)\b", re.IGNORECASE)
 
 
 def has_suspicious_encoding(text: str) -> bool:
-    """Return whether text contains a common UTF-8 mojibake sequence."""
+    """Check text for likely encoding corruption.
+
+    Args:
+        text: Text to inspect for mojibake.
+
+    Returns:
+        Whether the text contains suspicious encoding artifacts.
+    """
     return is_bad(text)
 
 
@@ -120,7 +127,17 @@ def _fetch_existing_quotes_v2(
     api_key: str,
     timeout: float,
 ) -> list[TumblrQuoteReference]:
-    """Fetch quote posts through Tumblr's supported v2 API."""
+    """Fetch quote posts through Tumblr's v2 API.
+
+    Args:
+        session: Requests session used for HTTP calls.
+        blog_name: Tumblr blog name or hostname.
+        api_key: Tumblr consumer key for public API access.
+        timeout: HTTP timeout in seconds.
+
+    Returns:
+        Quote references from every API page.
+    """
     references: list[TumblrQuoteReference] = []
     offset = 0
     total: int | None = None
@@ -169,7 +186,16 @@ def _fetch_existing_quotes_legacy(
     blog_hostname: str,
     timeout: float,
 ) -> list[TumblrQuoteReference]:
-    """Fetch quote posts through Tumblr's legacy public read endpoint."""
+    """Fetch quotes through Tumblr's legacy read endpoint.
+
+    Args:
+        session: Requests session used for HTTP calls.
+        blog_hostname: Public hostname for the Tumblr blog.
+        timeout: HTTP timeout in seconds.
+
+    Returns:
+        Quote references from every response page.
+    """
     references: list[TumblrQuoteReference] = []
     start = 0
     total: int | None = None
@@ -206,7 +232,16 @@ def _quote_references_from_posts(
     source_field: str,
     text_field: str,
 ) -> list[TumblrQuoteReference]:
-    """Convert Tumblr post dictionaries into deduplication references."""
+    """Convert Tumblr posts into quote references.
+
+    Args:
+        posts: Raw Tumblr post dictionaries.
+        source_field: Key containing the quote source HTML.
+        text_field: Key containing the quote text.
+
+    Returns:
+        References for posts containing a TDCJ statement URL.
+    """
     references: list[TumblrQuoteReference] = []
     for post in posts:
         source_html = post.get(source_field, "")
@@ -302,7 +337,20 @@ class TumblrPoster:
         source_html: str,
         tags: tuple[str, ...],
     ) -> dict[str, Any]:
-        """Replace a quote's text while preserving its source and tags."""
+        """Replace an existing Tumblr quote.
+
+        Args:
+            post_id: Tumblr post identifier to update.
+            record: Execution record containing replacement text.
+            source_html: Existing source HTML to preserve.
+            tags: Existing Tumblr tags to preserve.
+
+        Returns:
+            Raw Tumblr API response for the edit.
+
+        Raises:
+            ValueError: If the record has no statement text.
+        """
         if record.statement_text is None:
             raise ValueError("Cannot edit a Tumblr quote without statement text.")
 
