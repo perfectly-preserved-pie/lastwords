@@ -166,7 +166,7 @@ def run_tumblr_auth(args: argparse.Namespace) -> int:
         if not value
     ]
     if missing:
-        logger.error("Missing Tumblr app credentials: {}", ", ".join(missing))
+        logger.error(f"Missing Tumblr app credentials: {', '.join(missing)}")
         return 1
 
     request_session = OAuth1Session(
@@ -208,8 +208,8 @@ def run_tumblr_auth(args: argparse.Namespace) -> int:
         return 1
 
     logger.info("Add these as GitHub repository secrets:")
-    logger.info("TUMBLR_OAUTH_TOKEN={}", oauth_token)
-    logger.info("TUMBLR_OAUTH_SECRET={}", oauth_secret)
+    logger.info(f"TUMBLR_OAUTH_TOKEN={oauth_token}")
+    logger.info(f"TUMBLR_OAUTH_SECRET={oauth_secret}")
     return 0
 
 
@@ -303,8 +303,8 @@ def run_sync(args: argparse.Namespace) -> int:
     if settings.max_posts is not None:
         pending_records = pending_records[: settings.max_posts]
 
-    logger.info("Found {} missing statement(s) to process.", len(pending_records))
-    logger.info("Found {} existing post(s) with suspicious encoding.", len(repair_pairs))
+    logger.info(f"Found {len(pending_records)} missing statement(s) to process.")
+    logger.info(f"Found {len(repair_pairs)} existing post(s) with suspicious encoding.")
 
     posted: list[dict[str, Any]] = []
     skipped: list[dict[str, Any]] = []
@@ -318,7 +318,7 @@ def run_sync(args: argparse.Namespace) -> int:
         poster.validate_authentication()
 
     for reference, record in repair_pairs:
-        logger.info("Fetching clean text for execution {}...", record.execution)
+        logger.info(f"Fetching clean text for execution {record.execution}...")
         statement_text = fetch_statement_text(
             session,
             record.statement_url,
@@ -326,16 +326,13 @@ def run_sync(args: argparse.Namespace) -> int:
         )
         if statement_text is None:
             logger.warning(
-                "Cannot repair post {} because TDCJ has no statement text.",
-                reference.post_id,
+                f"Cannot repair post {reference.post_id} because TDCJ has no statement text."
             )
             continue
 
         if args.dry_run:
             logger.info(
-                "Dry run: would repair post {} for execution {}.",
-                reference.post_id,
-                record.execution,
+                f"Dry run: would repair post {reference.post_id} for execution {record.execution}."
             )
             would_repair_count += 1
             continue
@@ -349,10 +346,10 @@ def run_sync(args: argparse.Namespace) -> int:
             tags=reference.tags,
         )
         repaired_count += 1
-        logger.info("Repaired post {} for execution {}.", reference.post_id, record.execution)
+        logger.info(f"Repaired post {reference.post_id} for execution {record.execution}.")
 
     for record in pending_records:
-        logger.info("Fetching statement text for execution {}...", record.execution)
+        logger.info(f"Fetching statement text for execution {record.execution}...")
         statement_text = fetch_statement_text(
             session,
             record.statement_url,
@@ -360,8 +357,7 @@ def run_sync(args: argparse.Namespace) -> int:
         )
         if statement_text is None:
             logger.info(
-                "Skipping execution {} because TDCJ has no statement text.",
-                record.execution,
+                f"Skipping execution {record.execution} because TDCJ has no statement text."
             )
             ignored_statement_urls.add(normalize_statement_url(record.statement_url))
             skipped.append(
@@ -377,16 +373,14 @@ def run_sync(args: argparse.Namespace) -> int:
         enriched_record = replace(record, statement_text=statement_text)
         if args.dry_run:
             logger.info(
-                "Dry run: would post execution {} for {}.",
-                record.execution,
-                record.full_name,
+                f"Dry run: would post execution {record.execution} for {record.full_name}."
             )
             would_post_count += 1
             continue
         else:
             if poster is None:
                 poster = TumblrPoster(settings)
-            logger.info("Posting execution {} for {}...", record.execution, record.full_name)
+            logger.info(f"Posting execution {record.execution} for {record.full_name}...")
             response = poster.create_quote(enriched_record)
             response_id = response.get("id")
 
@@ -425,13 +419,13 @@ def run_sync(args: argparse.Namespace) -> int:
     save_state(settings.state_file, state)
 
     logger.success("Sync complete.")
-    logger.info("Latest TDCJ execution seen: {}", latest_tdcj_execution)
-    logger.info("Latest public Tumblr execution seen: {}", latest_public_execution)
+    logger.info(f"Latest TDCJ execution seen: {latest_tdcj_execution}")
+    logger.info(f"Latest public Tumblr execution seen: {latest_public_execution}")
     if args.dry_run:
-        logger.info("Would post this run: {}", would_post_count)
-        logger.info("Would repair this run: {}", would_repair_count)
-    logger.info("Posted this run: {}", len(posted))
-    logger.info("Repaired this run: {}", repaired_count)
-    logger.info("Skipped this run: {}", len(skipped))
-    logger.info("State written to {}", settings.state_file)
+        logger.info(f"Would post this run: {would_post_count}")
+        logger.info(f"Would repair this run: {would_repair_count}")
+    logger.info(f"Posted this run: {len(posted)}")
+    logger.info(f"Repaired this run: {repaired_count}")
+    logger.info(f"Skipped this run: {len(skipped)}")
+    logger.info(f"State written to {settings.state_file}")
     return 0
