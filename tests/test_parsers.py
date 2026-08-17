@@ -3,7 +3,13 @@ import json
 from lastwords.cli import parse_oauth_verifier
 from requests import PreparedRequest, Response, Session
 
-from lastwords.tdcj import decode_tdcj_response, parse_executions_html, parse_statement_html
+from lastwords.tdcj import (
+    EXECUTIONS_URL,
+    decode_tdcj_response,
+    fetch_executions,
+    parse_executions_html,
+    parse_statement_html,
+)
 from lastwords.tumblr import (
     extract_statement_url_from_quote_source,
     fetch_existing_quotes,
@@ -14,7 +20,7 @@ from lastwords.tumblr import (
 )
 
 EXECUTIONS_HTML = """
-<table class="tdcj_table indent">
+<table class="default" area-label="Table showing list of executed inmates">
   <tr>
     <th>Execution</th>
     <th>Link</th>
@@ -127,6 +133,24 @@ def json_response(payload: dict[str, object]) -> Response:
     response._content = json.dumps(payload).encode()
     response.headers["Content-Type"] = "application/json"
     return response
+
+
+def html_response(payload: str) -> Response:
+    response = Response()
+    response.status_code = 200
+    response._content = payload.encode("utf-8")
+    response.headers["Content-Type"] = "text/html; charset=utf-8"
+    return response
+
+
+def test_fetch_executions_uses_new_tdcj_url() -> None:
+    session = StubSession([html_response(EXECUTIONS_HTML)])
+
+    records = fetch_executions(session, timeout=30)
+
+    assert len(records) == 1
+    assert session.requests[0].url == EXECUTIONS_URL
+    assert EXECUTIONS_URL.endswith("/death_row/executed_inmates.html")
 
 
 def test_fetch_existing_quotes_uses_v2_api_when_key_is_available() -> None:

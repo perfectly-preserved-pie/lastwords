@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 
 from lastwords.models import ExecutionRecord
 
-EXECUTIONS_URL = "https://www.tdcj.texas.gov/death_row/dr_executed_offenders.html"
+EXECUTIONS_URL = "https://www.tdcj.texas.gov/death_row/executed_inmates.html"
 NON_STATEMENT_MARKERS = {
     "",
     "none",
