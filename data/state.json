@@ -349,6 +349,7 @@
     "https://www.tdcj.texas.gov/death_row/dr_info/newburydonaldlast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/nicholsjosephlast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/noblesjonathanlast.html",
+    "https://www.tdcj.texas.gov/death_row/dr_info/normanlejameslast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/nunciopaullast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/obrienderricklast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/obryanronaldlast.html",
@@ -506,33 +507,25 @@
   ],
   "last_result": {
     "dry_run": false,
-    "pending_count": 0,
-    "posted_count": 0,
+    "pending_count": 1,
+    "posted_count": 1,
     "repaired_count": 0,
     "skipped_count": 0,
     "would_post_count": 0,
     "would_repair_count": 0
   },
-  "last_run_at": "2026-09-14T15:16:22.280430+00:00",
+  "last_run_at": "2026-09-21T15:14:50.081239+00:00",
   "latest_public_execution_seen": 600,
-  "latest_tdcj_execution_seen": 600,
+  "latest_tdcj_execution_seen": 601,
   "most_recent_post": {
-    "execution": 600,
-    "execution_date": "2026-05-14",
-    "name": "Edward Busby",
-    "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/busbyedward.html",
-    "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/busbyedwardlast.html",
-    "tumblr_post_id": 820890982647300096
+    "execution": 601,
+    "execution_date": "2026-09-17",
+    "name": "LeJames Norman",
+    "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/normanlejames.html",
+    "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/normanlejameslast.html",
+    "tumblr_post_id": 828378908707684352
   },
   "recent_posts": [
-    {
-      "execution": 576,
-      "execution_date": "2022-10-05",
-      "name": "John Ramirez",
-      "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/ramirezjohn.html",
-      "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/ramirezjohnlast.html",
-      "tumblr_post_id": 820890972556804096
-    },
     {
       "execution": 577,
       "execution_date": "2022-11-09",
@@ -724,6 +717,14 @@
       "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/busbyedward.html",
       "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/busbyedwardlast.html",
       "tumblr_post_id": 820890982647300096
+    },
+    {
+      "execution": 601,
+      "execution_date": "2026-09-17",
+      "name": "LeJames Norman",
+      "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/normanlejames.html",
+      "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/normanlejameslast.html",
+      "tumblr_post_id": 828378908707684352
     }
   ],
   "recent_skips": [
