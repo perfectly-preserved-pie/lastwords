@@ -105,6 +105,13 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
 
+    delete_parser = subparsers.add_parser(
+        "delete-post",
+        help="Delete one post from the configured Tumblr blog.",
+    )
+    delete_parser.add_argument("post_id", help="Tumblr post ID to delete.")
+    delete_parser.add_argument("--blog-name", default=None, help="Override the Tumblr blog name.")
+
     return parser
 
 
@@ -136,6 +143,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "tumblr-auth":
         return run_tumblr_auth(args)
+
+    if args.command == "delete-post":
+        return run_delete_post(args)
 
     parser.error(f"Unknown command: {args.command}")
     return 2
@@ -210,6 +220,16 @@ def run_tumblr_auth(args: argparse.Namespace) -> int:
     logger.info("Add these as GitHub repository secrets:")
     logger.info(f"TUMBLR_OAUTH_TOKEN={oauth_token}")
     logger.info(f"TUMBLR_OAUTH_SECRET={oauth_secret}")
+    return 0
+
+
+def run_delete_post(args: argparse.Namespace) -> int:
+    """Delete one authenticated Tumblr post by ID."""
+    settings = Settings.from_env(blog_name=args.blog_name)
+    poster = TumblrPoster(settings)
+    poster.validate_authentication()
+    poster.delete_post(args.post_id)
+    logger.success(f"Deleted Tumblr post {args.post_id}.")
     return 0
 
 

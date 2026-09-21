@@ -7,6 +7,7 @@ from lastwords.tdcj import (
     EXECUTIONS_URL,
     decode_tdcj_response,
     fetch_executions,
+    is_non_statement,
     parse_executions_html,
     parse_statement_html,
 )
@@ -105,6 +106,13 @@ def test_parse_statement_html_filters_empty_markers() -> None:
     This prevents placeholder text from being posted.
     """
     assert parse_statement_html(NO_STATEMENT_HTML) is None
+
+
+def test_non_statement_guard_rejects_archive_placeholder() -> None:
+    """Reject the placeholder that previously reached the public archive."""
+    assert is_non_statement("No Last Statement Provided")
+    assert is_non_statement("No last statement provided.")
+    assert not is_non_statement("I have one final thing to say.")
 
 
 def test_decode_tdcj_response_preserves_smart_punctuation() -> None:

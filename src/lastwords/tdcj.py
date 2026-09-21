@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+import re
 from typing import Iterable
 from urllib.parse import urljoin
 
@@ -24,7 +25,29 @@ NON_STATEMENT_MARKERS = {
     "(written statement)",
     "spoken: no",
     "spoken: no.",
+    "no last statement provided",
+    "no last statement provided.",
 }
+
+
+def is_non_statement(text: str | None) -> bool:
+    """Return whether text is a known placeholder rather than a statement."""
+    if text is None:
+        return True
+
+    normalized = normalize_whitespace(text).casefold()
+    if normalized in NON_STATEMENT_MARKERS:
+        return True
+
+    words = re.sub(r"[^a-z0-9]+", " ", normalized).strip()
+    return words in {
+        "no last statement",
+        "no last statement provided",
+        "no statement",
+        "no statement given",
+        "no statement was made",
+        "this inmate declined to make a last statement",
+    }
 
 
 def decode_tdcj_response(response: requests.Response) -> str:
@@ -161,7 +184,7 @@ def parse_statement_html(html_text: str) -> str | None:
             paragraphs.append(paragraph)
 
     statement = normalize_whitespace(" ".join(paragraphs))
-    if statement.lower() in NON_STATEMENT_MARKERS:
+    if is_non_statement(statement):
         return None
     return statement or None
 

@@ -13,6 +13,7 @@ from ftfy.badness import is_bad
 
 from lastwords.config import Settings
 from lastwords.models import ExecutionRecord, TumblrQuoteReference
+from lastwords.tdcj import is_non_statement
 
 READ_API_PAGE_SIZE = 50
 V2_API_PAGE_SIZE = 20
@@ -304,6 +305,12 @@ class TumblrPoster:
             ),
         )
 
+    def delete_post(self, post_id: str) -> dict[str, Any]:
+        """Delete one post from the configured Tumblr blog."""
+        response = self.client.delete_post(self.blog_name, id=post_id)
+        validate_tumblr_response(response, action=f"delete post {post_id}")
+        return response
+
     def create_quote(self, record: ExecutionRecord) -> dict[str, Any]:
         """Create a quote post on Tumblr for a single execution record.
 
@@ -316,8 +323,8 @@ class TumblrPoster:
         Raises:
             ValueError: Raised when the record does not include statement text.
         """
-        if record.statement_text is None:
-            raise ValueError("Cannot create a Tumblr quote without statement text.")
+        if is_non_statement(record.statement_text):
+            raise ValueError("Cannot create a Tumblr quote without a real statement.")
 
         response = self.client.create_quote(
             self.blog_name,
@@ -351,8 +358,8 @@ class TumblrPoster:
         Raises:
             ValueError: If the record has no statement text.
         """
-        if record.statement_text is None:
-            raise ValueError("Cannot edit a Tumblr quote without statement text.")
+        if is_non_statement(record.statement_text):
+            raise ValueError("Cannot edit a Tumblr quote without a real statement.")
 
         response = self.client.edit_post(
             self.blog_name,
