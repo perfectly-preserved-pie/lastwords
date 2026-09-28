@@ -379,6 +379,7 @@
     "https://www.tdcj.texas.gov/death_row/dr_info/pursleylonnielast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/pylesjohnnylast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/quintanillajohnlast.html",
+    "https://www.tdcj.texas.gov/death_row/dr_info/rameykerseanlast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/ramirezjohnlast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/ramirezluislast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/ramosrobertlast.html",
@@ -514,26 +515,18 @@
     "would_post_count": 0,
     "would_repair_count": 0
   },
-  "last_run_at": "2026-09-21T15:14:50.081239+00:00",
-  "latest_public_execution_seen": 600,
-  "latest_tdcj_execution_seen": 601,
+  "last_run_at": "2026-09-28T15:16:59.116741+00:00",
+  "latest_public_execution_seen": 601,
+  "latest_tdcj_execution_seen": 602,
   "most_recent_post": {
-    "execution": 601,
-    "execution_date": "2026-09-17",
-    "name": "LeJames Norman",
-    "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/normanlejames.html",
-    "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/normanlejameslast.html",
-    "tumblr_post_id": 828378908707684352
+    "execution": 602,
+    "execution_date": "2026-09-23",
+    "name": "Ker'sean Olajuwa Ramey",
+    "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/rameykersean.html",
+    "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/rameykerseanlast.html",
+    "tumblr_post_id": 829013222748274688
   },
   "recent_posts": [
-    {
-      "execution": 577,
-      "execution_date": "2022-11-09",
-      "name": "Tracy Beatty",
-      "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/beattytracy.html",
-      "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/beattytracylast.html",
-      "tumblr_post_id": 820890972958457856
-    },
     {
       "execution": 578,
       "execution_date": "2022-11-16",
@@ -725,6 +718,14 @@
       "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/normanlejames.html",
       "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/normanlejameslast.html",
       "tumblr_post_id": 828378908707684352
+    },
+    {
+      "execution": 602,
+      "execution_date": "2026-09-23",
+      "name": "Ker'sean Olajuwa Ramey",
+      "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/rameykersean.html",
+      "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/rameykerseanlast.html",
+      "tumblr_post_id": 829013222748274688
     }
   ],
   "recent_skips": [
