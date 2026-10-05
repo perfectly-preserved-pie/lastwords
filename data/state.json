@@ -508,15 +508,15 @@
   ],
   "last_result": {
     "dry_run": false,
-    "pending_count": 1,
-    "posted_count": 1,
+    "pending_count": 0,
+    "posted_count": 0,
     "repaired_count": 0,
     "skipped_count": 0,
     "would_post_count": 0,
     "would_repair_count": 0
   },
-  "last_run_at": "2026-09-28T15:16:59.116741+00:00",
-  "latest_public_execution_seen": 601,
+  "last_run_at": "2026-10-05T15:16:48.094983+00:00",
+  "latest_public_execution_seen": 602,
   "latest_tdcj_execution_seen": 602,
   "most_recent_post": {
     "execution": 602,
