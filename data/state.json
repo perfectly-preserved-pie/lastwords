@@ -232,6 +232,7 @@
     "https://www.tdcj.texas.gov/death_row/dr_info/hoguejerrylast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/holidayraphaellast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/hoppergeorgelast.html",
+    "https://www.tdcj.texas.gov/death_row/dr_info/howardjamaallast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/howardronaldlast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/hudsonrobertlast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/hughesbillylast.html",
@@ -508,33 +509,25 @@
   ],
   "last_result": {
     "dry_run": false,
-    "pending_count": 0,
-    "posted_count": 0,
+    "pending_count": 1,
+    "posted_count": 1,
     "repaired_count": 0,
     "skipped_count": 0,
     "would_post_count": 0,
     "would_repair_count": 0
   },
-  "last_run_at": "2026-10-05T15:16:48.094983+00:00",
+  "last_run_at": "2026-10-12T15:18:10.686792+00:00",
   "latest_public_execution_seen": 602,
-  "latest_tdcj_execution_seen": 602,
+  "latest_tdcj_execution_seen": 603,
   "most_recent_post": {
-    "execution": 602,
-    "execution_date": "2026-09-23",
-    "name": "Ker'sean Olajuwa Ramey",
-    "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/rameykersean.html",
-    "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/rameykerseanlast.html",
-    "tumblr_post_id": 829013222748274688
+    "execution": 603,
+    "execution_date": "2026-10-07",
+    "name": "Jamaal Howard",
+    "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/howardjamaal.html",
+    "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/howardjamaallast.html",
+    "tumblr_post_id": 830281655286644736
   },
   "recent_posts": [
-    {
-      "execution": 578,
-      "execution_date": "2022-11-16",
-      "name": "Stephen Barbee",
-      "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/barbeestephen.html",
-      "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/barbeestephenlast.html",
-      "tumblr_post_id": 820890973299261440
-    },
     {
       "execution": 579,
       "execution_date": "2023-01-10",
@@ -726,6 +719,14 @@
       "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/rameykersean.html",
       "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/rameykerseanlast.html",
       "tumblr_post_id": 829013222748274688
+    },
+    {
+      "execution": 603,
+      "execution_date": "2026-10-07",
+      "name": "Jamaal Howard",
+      "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/howardjamaal.html",
+      "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/howardjamaallast.html",
+      "tumblr_post_id": 830281655286644736
     }
   ],
   "recent_skips": [
