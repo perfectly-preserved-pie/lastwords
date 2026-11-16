@@ -415,6 +415,7 @@
     "https://www.tdcj.texas.gov/death_row/dr_info/rosalesmichaellast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/rossvaughnlast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/rowellrobertlast.html",
+    "https://www.tdcj.texas.gov/death_row/dr_info/rubiojohnlast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/ruddemersonlast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/ruizrolandolast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/ruizwesleylast.html",
@@ -509,33 +510,25 @@
   ],
   "last_result": {
     "dry_run": false,
-    "pending_count": 0,
-    "posted_count": 0,
+    "pending_count": 1,
+    "posted_count": 1,
     "repaired_count": 0,
     "skipped_count": 0,
     "would_post_count": 0,
     "would_repair_count": 0
   },
-  "last_run_at": "2026-11-09T15:10:28.632424+00:00",
+  "last_run_at": "2026-11-16T15:16:12.344918+00:00",
   "latest_public_execution_seen": 603,
-  "latest_tdcj_execution_seen": 603,
+  "latest_tdcj_execution_seen": 604,
   "most_recent_post": {
-    "execution": 603,
-    "execution_date": "2026-10-07",
-    "name": "Jamaal Howard",
-    "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/howardjamaal.html",
-    "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/howardjamaallast.html",
-    "tumblr_post_id": 830281655286644736
+    "execution": 604,
+    "execution_date": "2026-11-12",
+    "name": "John Rubio",
+    "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/rubiojohn.html",
+    "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/rubiojohnlast.html",
+    "tumblr_post_id": 833452425085157376
   },
   "recent_posts": [
-    {
-      "execution": 579,
-      "execution_date": "2023-01-10",
-      "name": "Robert Fratta",
-      "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/frattarobert.jpg",
-      "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/frattarobertlast.html",
-      "tumblr_post_id": 820890973665165312
-    },
     {
       "execution": 580,
       "execution_date": "2023-02-01",
@@ -727,6 +720,14 @@
       "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/howardjamaal.html",
       "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/howardjamaallast.html",
       "tumblr_post_id": 830281655286644736
+    },
+    {
+      "execution": 604,
+      "execution_date": "2026-11-12",
+      "name": "John Rubio",
+      "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/rubiojohn.html",
+      "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/rubiojohnlast.html",
+      "tumblr_post_id": 833452425085157376
     }
   ],
   "recent_skips": [
