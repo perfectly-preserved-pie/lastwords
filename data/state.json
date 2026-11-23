@@ -137,6 +137,7 @@
     "https://www.tdcj.texas.gov/death_row/dr_info/daviswilliamlast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/delkmontylast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/delunacarloslast.html",
+    "https://www.tdcj.texas.gov/death_row/dr_info/dennesreinaldolast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/derrickmikellast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/diazarturolast.html",
     "https://www.tdcj.texas.gov/death_row/dr_info/dicksonryanlast.html",
@@ -517,26 +518,18 @@
     "would_post_count": 0,
     "would_repair_count": 0
   },
-  "last_run_at": "2026-11-16T15:16:12.344918+00:00",
-  "latest_public_execution_seen": 603,
-  "latest_tdcj_execution_seen": 604,
+  "last_run_at": "2026-11-23T15:10:16.962578+00:00",
+  "latest_public_execution_seen": 604,
+  "latest_tdcj_execution_seen": 605,
   "most_recent_post": {
-    "execution": 604,
-    "execution_date": "2026-11-12",
-    "name": "John Rubio",
-    "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/rubiojohn.html",
-    "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/rubiojohnlast.html",
-    "tumblr_post_id": 833452425085157376
+    "execution": 605,
+    "execution_date": "2026-11-19",
+    "name": "Reinaldo Dennes",
+    "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/dennesreinaldo.html",
+    "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/dennesreinaldolast.html",
+    "tumblr_post_id": 834086231483809792
   },
   "recent_posts": [
-    {
-      "execution": 580,
-      "execution_date": "2023-02-01",
-      "name": "Wesley Ruiz",
-      "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/ruizwesley.html",
-      "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/ruizwesleylast.html",
-      "tumblr_post_id": 820890974026924032
-    },
     {
       "execution": 581,
       "execution_date": "2023-02-09",
@@ -728,6 +721,14 @@
       "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/rubiojohn.html",
       "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/rubiojohnlast.html",
       "tumblr_post_id": 833452425085157376
+    },
+    {
+      "execution": 605,
+      "execution_date": "2026-11-19",
+      "name": "Reinaldo Dennes",
+      "offender_url": "https://www.tdcj.texas.gov/death_row/dr_info/dennesreinaldo.html",
+      "statement_url": "https://www.tdcj.texas.gov/death_row/dr_info/dennesreinaldolast.html",
+      "tumblr_post_id": 834086231483809792
     }
   ],
   "recent_skips": [
